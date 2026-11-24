@@ -1,0 +1,1131 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation, Outlet, Navigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
+import { ThemeContext } from '../contexts/ThemeContext';
+import logo from '../assets/logo.jpg';
+import AdminSettingsDialog from './AdminSettingsDialog';
+
+// ─── DESIGN TOKENS ────────────────────────────────────────────────────────────
+const T = {
+  dark: {
+    bg:         '#060a14',
+    sidebar:    'rgba(10, 17, 34, 0.88)',
+    sidebarBorder: 'rgba(212, 175, 55, 0.16)',
+    card:       'rgba(12, 20, 38, 0.85)',
+    glass:      'rgba(10, 18, 35, 0.88)',
+    border:     'rgba(212, 175, 55, 0.15)',
+    text:       '#f8fafc',
+    muted:      '#94a3b8',
+    sub:        '#cbd5e1',
+    activeText: '#ffd700',
+    surface:    'rgba(18, 30, 56, 0.72)',
+    inputBg:    'rgba(7, 12, 24, 0.75)',
+  },
+  light: {
+    bg:         '#f8fafc',
+    sidebar:    'rgba(255, 255, 255, 0.92)',
+    sidebarBorder: 'rgba(184, 134, 11, 0.15)',
+    card:       'rgba(255, 255, 255, 0.92)',
+    glass:      'rgba(255, 255, 255, 0.92)',
+    border:     'rgba(15, 23, 42, 0.08)',
+    text:       '#0f172a',
+    muted:      '#64748b',
+    sub:        '#475569',
+    activeText: '#060a14',
+    surface:    'rgba(241, 245, 249, 0.85)',
+    inputBg:    'rgba(241, 245, 249, 0.85)',
+  },
+};
+
+const A = {
+  indigo:  '#d4af37', // 24K Royal Gold primary accent
+  gold:    '#d4af37',
+  goldLight: '#f3cf7a',
+  goldDark: '#aa820a',
+  violet:  '#38bdf8', // Electric Sapphire secondary accent
+  cyan:    '#38bdf8',
+  emerald: '#10b981',
+  amber:   '#fbbf24',
+  rose:    '#f43f5e',
+  coral:   '#ff5c7c',
+};
+
+// ─── NAV ITEMS ────────────────────────────────────────────────────────────────
+const NAV_ITEMS = [
+  { path: '/',             icon: HomeIcon,    label: 'Home'    },
+  { path: '/students',     icon: UsersIcon,   label: 'Students'},
+  { path: '/reports',      icon: ChartIcon,   label: 'Reports' },
+  { path: '/daily-report', icon: CalIcon,     label: 'Daily'   },
+];
+
+const SIDEBAR_EXTRA = [
+  { path: '/exams',        icon: BookIcon,    label: 'Exams'       },
+  { path: '/add-student',  icon: PlusIcon,    label: 'Add Student' },
+  { path: '/add-subject',  icon: BookIcon,    label: 'Add Subject' },
+  { path: '/teachers',     icon: CapIcon,     label: 'Teachers'    },
+  { path: '/qr-scanner',   icon: QrIcon,      label: 'QR Scanner'  },
+];
+
+// ─── SVG ICON COMPONENTS ──────────────────────────────────────────────────────
+function HomeIcon({ size = 18, color = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+      <polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
+  );
+}
+function UsersIcon({ size = 18, color = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+      <circle cx="9" cy="7" r="4"/>
+      <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+    </svg>
+  );
+}
+function ChartIcon({ size = 18, color = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="18" y1="20" x2="18" y2="10"/>
+      <line x1="12" y1="20" x2="12" y2="4"/>
+      <line x1="6" y1="20" x2="6" y2="14"/>
+      <line x1="2" y1="20" x2="22" y2="20"/>
+    </svg>
+  );
+}
+function CalIcon({ size = 18, color = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="4" width="18" height="18" rx="2"/>
+      <line x1="16" y1="2" x2="16" y2="6"/>
+      <line x1="8" y1="2" x2="8" y2="6"/>
+      <line x1="3" y1="10" x2="21" y2="10"/>
+    </svg>
+  );
+}
+function PlusIcon({ size = 18, color = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="8" x2="12" y2="16"/>
+      <line x1="8" y1="12" x2="16" y2="12"/>
+    </svg>
+  );
+}
+function BookIcon({ size = 18, color = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+    </svg>
+  );
+}
+function QrIcon({ size = 18, color = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+      <rect x="3" y="14" width="7" height="7"/>
+      <line x1="14" y1="14" x2="14" y2="14"/><line x1="17" y1="14" x2="17" y2="14"/>
+      <line x1="20" y1="14" x2="20" y2="14"/><line x1="20" y1="17" x2="20" y2="17"/>
+      <line x1="17" y1="20" x2="20" y2="20"/><line x1="14" y1="17" x2="14" y2="20"/>
+    </svg>
+  );
+}
+function CapIcon({ size = 18, color = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+      <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/>
+    </svg>
+  );
+}
+function GlobeIcon({ size = 18, color = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="2" y1="12" x2="22" y2="12"/>
+      <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+    </svg>
+  );
+}
+function MoonIcon({ size = 18, color = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+    </svg>
+  );
+}
+function SunIcon({ size = 18, color = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+  );
+}
+function LogoutIcon({ size = 18, color = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+      <polyline points="16 17 21 12 16 7"/>
+      <line x1="21" y1="12" x2="9" y2="12"/>
+    </svg>
+  );
+}
+function MenuIcon({ size = 20, color = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round">
+      <line x1="3" y1="6" x2="21" y2="6"/>
+      <line x1="3" y1="12" x2="16" y2="12"/>
+      <line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+  );
+}
+
+function LockIcon({ size = 18, color = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+      <path d="M7 11V7a5 5 0 0110 0v4"/>
+    </svg>
+  );
+}
+
+// ─── SIDEBAR NAV ITEM (FLUID GLIDING PILL) ───────────────────────────────────
+function SideNavItem({ item, active, onClick, theme, collapsed }) {
+  const colors = T[theme];
+  const IconComp = item.icon;
+
+  return (
+    <motion.button
+      onClick={onClick}
+      whileHover={{ x: active ? 0 : 4 }}
+      whileTap={{ scale: 0.96 }}
+      title={collapsed ? item.label : undefined}
+      style={{
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        gap: collapsed ? 0 : 13,
+        justifyContent: collapsed ? 'center' : 'flex-start',
+        padding: collapsed ? '12px' : '11px 16px',
+        borderRadius: 14,
+        cursor: 'pointer',
+        marginBottom: 4,
+        border: 'none',
+        outline: 'none',
+        background: 'transparent',
+        position: 'relative',
+        transition: 'color 0.2s ease',
+      }}
+    >
+      {/* Gliding Active Pill */}
+      {active && (
+        <motion.div
+          layoutId="sidebarActivePill"
+          transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            borderRadius: 14,
+            background: 'linear-gradient(135deg, #d4af37 0%, #aa820a 55%, #c8960c 100%)',
+            boxShadow: '0 6px 20px -2px rgba(212, 175, 55, 0.45), inset 0 1px 0 0 rgba(255, 255, 255, 0.3)',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            zIndex: 0,
+          }}
+        />
+      )}
+
+      {/* Hover background for non-active items */}
+      {!active && (
+        <div style={{
+          position: 'absolute', inset: 0, borderRadius: 14,
+          background: theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
+          opacity: 0, transition: 'opacity 0.18s ease',
+          pointerEvents: 'none',
+        }} className="nav-hover-bg" />
+      )}
+
+      {/* Icon */}
+      <span style={{
+        color: active ? '#fff' : colors.sub,
+        flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        zIndex: 1,
+        transition: 'color 0.2s',
+      }}>
+        <IconComp size={18} color={active ? '#fff' : colors.sub} />
+      </span>
+
+      {/* Label */}
+      {!collapsed && (
+        <span style={{
+          fontWeight: active ? 700 : 600,
+          fontSize: 13.5,
+          color: active ? '#fff' : colors.sub,
+          letterSpacing: '-0.2px',
+          zIndex: 1,
+          transition: 'color 0.2s',
+          whiteSpace: 'nowrap',
+        }}>
+          {item.label}
+        </span>
+      )}
+
+      {/* Active micro-dot indicator */}
+      {active && !collapsed && (
+        <motion.span
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          style={{
+            marginLeft: 'auto',
+            width: 6, height: 6,
+            borderRadius: '50%',
+            background: '#fff',
+            boxShadow: '0 0 8px #fff',
+            flexShrink: 0,
+            zIndex: 1,
+          }}
+        />
+      )}
+    </motion.button>
+  );
+}
+
+// ─── BOTTOM NAV ITEM (FLUID DOCK) ───────────────────────────────────────────
+function BottomNavItem({ item, active, onClick, theme }) {
+  const colors = T[theme];
+  const IconComp = item.icon;
+
+  return (
+    <motion.button
+      onClick={onClick}
+      whileTap={{ scale: 0.88 }}
+      style={{
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 4,
+        background: 'none',
+        border: 'none',
+        cursor: 'pointer',
+        padding: '8px 4px 6px',
+        position: 'relative',
+      }}
+    >
+      {/* Active pill bg */}
+      {active && (
+        <motion.div
+          layoutId="activeTabBg"
+          style={{
+            position: 'absolute',
+            top: 5,
+            width: 44,
+            height: 40,
+            borderRadius: 14,
+            background: 'linear-gradient(135deg, #d4af37 0%, #aa820a 50%, #c8960c 100%)',
+            boxShadow: '0 6px 20px rgba(212, 175, 55, 0.45), inset 0 1px 0 0 rgba(255, 255, 255, 0.25)',
+          }}
+          transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+        />
+      )}
+
+      {/* Icon */}
+      <span style={{
+        position: 'relative',
+        zIndex: 1,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 40, height: 38,
+      }}>
+        <IconComp
+          size={19}
+          color={active ? '#fff' : colors.muted}
+        />
+      </span>
+
+      {/* Label */}
+      <span style={{
+        fontSize: 9.5,
+        fontWeight: 700,
+        letterSpacing: '0.4px',
+        color: active ? '#fff' : colors.muted,
+        textTransform: 'uppercase',
+        lineHeight: 1,
+        transition: 'color 0.2s',
+      }}>
+        {item.label}
+      </span>
+    </motion.button>
+  );
+}
+
+// ─── MAIN LAYOUT ──────────────────────────────────────────────────────────────
+export default function Layout() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { t, i18n } = useTranslation();
+  const { toggleColorMode, mode } = React.useContext(ThemeContext);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [adminSettingsOpen, setAdminSettingsOpen] = useState(false);
+  const theme = mode === 'dark' ? 'dark' : 'light';
+  const colors = T[theme];
+
+  useEffect(() => {
+    const el = document.querySelector('.main-scroll-area');
+    if (!el) return;
+    const onScroll = () => setScrolled(el.scrollTop > 10);
+    el.addEventListener('scroll', onScroll);
+    return () => el.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const userInfo = (() => {
+    try {
+      const raw = sessionStorage.getItem('userInfo') || localStorage.getItem('userInfo');
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  })();
+
+  // Guard: If teacher user hits any Layout/Admin route, redirect appropriately
+  if (userInfo?.role === 'teacher') {
+    if (location.pathname === '/exams' || location.pathname.startsWith('/exams')) {
+      return <Navigate to="/teacher/exams" replace />;
+    }
+    return <Navigate to="/teacher-dashboard" replace />;
+  }
+
+  // Guard: If student user hits any Layout/Admin route, redirect to login
+  if (userInfo?.role === 'student') {
+    return <Navigate to="/login" replace />;
+  }
+
+  const isActive = (path) =>
+    path === '/' ? location.pathname === '/' : location.pathname.startsWith(path);
+
+  const handleNav = (path) => {
+    navigate(path);
+    setSidebarOpen(false);
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('userInfo');
+    localStorage.removeItem('userInfo');
+    navigate('/login');
+  };
+
+  const pageTitle =
+    [...NAV_ITEMS, ...SIDEBAR_EXTRA].find(i => isActive(i.path))?.label || 'Osra Institute';
+
+  // ── Sidebar inner content ──────────────────────────────────────────────────
+  const SidebarInner = ({ collapsed = false }) => (
+    <div style={{
+      width: collapsed ? 72 : 256,
+      height: '100%',
+      background: colors.sidebar,
+      display: 'flex',
+      flexDirection: 'column',
+      borderRight: `1px solid ${colors.sidebarBorder}`,
+      transition: 'width 0.25s cubic-bezier(0.4,0,0.2,1)',
+      overflow: 'hidden',
+    }}>
+
+
+      {/* ── Brand ── */}
+      <div style={{
+        padding: collapsed ? '24px 0' : '24px 20px 20px',
+        borderBottom: `1px solid ${colors.border}`,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 12,
+        justifyContent: collapsed ? 'center' : 'flex-start',
+        overflow: 'hidden',
+      }}>
+        <div style={{
+          width: 40, height: 40,
+          borderRadius: 14,
+          overflow: 'hidden',
+          flexShrink: 0,
+          border: '2px solid rgba(212, 175, 55, 0.6)',
+          boxShadow: '0 0 20px rgba(212, 175, 55, 0.5)',
+          position: 'relative',
+        }}>
+          <img
+            src={logo}
+            alt="logo"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
+        </div>
+        {!collapsed && (
+          <div>
+            <div style={{
+              fontWeight: 900,
+              fontSize: 18,
+              background: 'linear-gradient(135deg, #f5d77f 0%, #d4af37 60%, #aa820a 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              letterSpacing: '-0.5px',
+              lineHeight: 1.1,
+              fontFamily: "'Outfit', 'Plus Jakarta Sans', sans-serif",
+            }}>OSRA</div>
+            <div style={{
+              fontSize: 9,
+              fontWeight: 800,
+              letterSpacing: '2.5px',
+              color: '#d4af37',
+              textTransform: 'uppercase',
+            }}>Institute OS</div>
+          </div>
+        )}
+      </div>
+
+      {/* ── Nav items ── */}
+      <div style={{
+        flex: 1,
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        padding: collapsed ? '16px 8px' : '16px 12px',
+      }}>
+        {/* Section label */}
+        {!collapsed && (
+          <div style={{
+            fontSize: 9,
+            fontWeight: 800,
+            letterSpacing: '2px',
+            color: colors.muted,
+            textTransform: 'uppercase',
+            padding: '0 6px',
+            marginBottom: 10,
+          }}>Menu</div>
+        )}
+
+        {NAV_ITEMS.map(item => (
+          <SideNavItem
+            key={item.path}
+            item={item}
+            active={isActive(item.path)}
+            onClick={() => handleNav(item.path)}
+            theme={theme}
+            collapsed={collapsed}
+          />
+        ))}
+
+        {/* Divider */}
+        <div style={{
+          height: 1,
+          background: colors.border,
+          margin: '14px 6px',
+        }} />
+
+        {!collapsed && (
+          <div style={{
+            fontSize: 9,
+            fontWeight: 800,
+            letterSpacing: '2px',
+            color: colors.muted,
+            textTransform: 'uppercase',
+            padding: '0 6px',
+            marginBottom: 10,
+          }}>Manage</div>
+        )}
+
+        {SIDEBAR_EXTRA.map(item => (
+          <SideNavItem
+            key={item.path}
+            item={item}
+            active={isActive(item.path)}
+            onClick={() => handleNav(item.path)}
+            theme={theme}
+            collapsed={collapsed}
+          />
+        ))}
+
+        {/* Divider */}
+        <div style={{
+          height: 1,
+          background: colors.border,
+          margin: '14px 6px',
+        }} />
+
+        {!collapsed && (
+          <div style={{
+            fontSize: 9,
+            fontWeight: 800,
+            letterSpacing: '2px',
+            color: colors.muted,
+            textTransform: 'uppercase',
+            padding: '0 6px',
+            marginBottom: 10,
+          }}>Settings</div>
+        )}
+
+        {/* Language */}
+        <motion.button
+          whileHover={{ x: collapsed ? 0 : 3 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => i18n.changeLanguage(i18n.language === 'en' ? 'si' : 'en')}
+          title={collapsed ? 'Language' : undefined}
+          style={{
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            gap: collapsed ? 0 : 13,
+            justifyContent: collapsed ? 'center' : 'flex-start',
+            padding: collapsed ? '12px' : '11px 14px',
+            borderRadius: 12,
+            cursor: 'pointer',
+            marginBottom: 2,
+            background: 'transparent',
+            border: 'none',
+            outline: 'none',
+          }}
+        >
+          <GlobeIcon size={17} color={colors.sub} />
+          {!collapsed && (
+            <span style={{ fontWeight: 500, fontSize: 13.5, color: colors.sub }}>
+              {i18n.language === 'si' ? 'සිංහල' : 'English'}
+            </span>
+          )}
+        </motion.button>
+
+        {/* Theme */}
+        <motion.button
+          whileHover={{ x: collapsed ? 0 : 3 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={toggleColorMode}
+          title={collapsed ? (mode === 'dark' ? 'Light Mode' : 'Dark Mode') : undefined}
+          style={{
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            gap: collapsed ? 0 : 13,
+            justifyContent: collapsed ? 'center' : 'flex-start',
+            padding: collapsed ? '12px' : '11px 14px',
+            borderRadius: 12,
+            cursor: 'pointer',
+            background: 'transparent',
+            border: 'none',
+            outline: 'none',
+          }}
+        >
+          {mode === 'dark'
+            ? <SunIcon size={17} color={colors.sub} />
+            : <MoonIcon size={17} color={colors.sub} />
+          }
+          {!collapsed && (
+            <span style={{ fontWeight: 500, fontSize: 13.5, color: colors.sub }}>
+              {mode === 'dark' ? 'Light Mode' : 'Dark Mode'}
+            </span>
+          )}
+        </motion.button>
+
+        {/* Admin Credentials */}
+        <motion.button
+          whileHover={{ x: collapsed ? 0 : 3 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => setAdminSettingsOpen(true)}
+          title={collapsed ? 'Admin Credentials' : undefined}
+          style={{
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            gap: collapsed ? 0 : 13,
+            justifyContent: collapsed ? 'center' : 'flex-start',
+            padding: collapsed ? '12px' : '11px 14px',
+            borderRadius: 12,
+            cursor: 'pointer',
+            background: 'transparent',
+            border: 'none',
+            outline: 'none',
+          }}
+        >
+          <LockIcon size={17} color={colors.sub} />
+          {!collapsed && (
+            <span style={{ fontWeight: 500, fontSize: 13.5, color: colors.sub }}>
+              {i18n.language === 'si' ? 'ගිණුම් සැකසුම්' : 'Admin Credentials'}
+            </span>
+          )}
+        </motion.button>
+      </div>
+
+      {/* ── Logout ── */}
+      <div style={{
+        padding: collapsed ? '12px 8px 20px' : '12px 12px 20px',
+        borderTop: `1px solid ${colors.border}`,
+      }}>
+        <motion.button
+          whileHover={{ x: collapsed ? 0 : 3 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={handleLogout}
+          title={collapsed ? 'Logout' : undefined}
+          style={{
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            gap: collapsed ? 0 : 13,
+            justifyContent: collapsed ? 'center' : 'flex-start',
+            padding: collapsed ? '12px' : '11px 14px',
+            borderRadius: 12,
+            cursor: 'pointer',
+            background: 'rgba(255,92,124,0.07)',
+            border: '1px solid rgba(255,92,124,0.12)',
+            outline: 'none',
+            transition: 'background 0.2s',
+          }}
+        >
+          <LogoutIcon size={17} color={A.coral} />
+          {!collapsed && (
+            <span style={{ fontWeight: 600, fontSize: 13.5, color: A.coral }}>
+              {t('logout')}
+            </span>
+          )}
+        </motion.button>
+
+        {!collapsed && (
+          <div style={{
+            textAlign: 'center',
+            marginTop: 14,
+            fontSize: 9.5,
+            color: colors.muted,
+            letterSpacing: '1.5px',
+          }}>
+            OSRA INSTITUTE • 2026
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={{
+      display: 'flex',
+      minHeight: '100vh',
+      background: 'transparent',
+      fontFamily: "'Outfit', 'Inter', sans-serif",
+      color: colors.text,
+      transition: 'background 0.2s, color 0.2s',
+      position: 'relative',
+    }}>
+
+
+      {/* ── DESKTOP SIDEBAR ── */}
+      <div className="desktop-sidebar" style={{
+        position: 'sticky',
+        top: 0,
+        height: '100vh',
+        flexShrink: 0,
+        display: 'none',
+      }}>
+        <SidebarInner collapsed={sidebarCollapsed} />
+
+        {/* Collapse toggle */}
+        <motion.button
+          onClick={() => setSidebarCollapsed(p => !p)}
+          whileTap={{ scale: 0.9 }}
+          style={{
+            position: 'absolute',
+            top: 78,
+            right: -13,
+            width: 26, height: 26,
+            borderRadius: '50%',
+            background: colors.sidebar,
+            border: `1px solid ${colors.border}`,
+            boxShadow: `0 2px 8px rgba(0,0,0,0.1)`,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            outline: 'none',
+            zIndex: 10,
+          }}
+        >
+          <svg
+            width={12} height={12}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke={colors.sub}
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            style={{
+              transform: sidebarCollapsed ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'transform 0.3s',
+            }}
+          >
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </motion.button>
+      </div>
+
+      {/* ── MOBILE OVERLAY SIDEBAR ── */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <>
+            <motion.div
+              key="overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setSidebarOpen(false)}
+              style={{
+                position: 'fixed',
+                inset: 0,
+                zIndex: 200,
+                background: 'rgba(0,0,0,0.7)',
+              }}
+            />
+            <motion.div
+              key="drawer"
+              initial={{ x: -270 }}
+              animate={{ x: 0 }}
+              exit={{ x: -270 }}
+              transition={{ type: 'spring', stiffness: 340, damping: 32 }}
+              style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                bottom: 0,
+                zIndex: 201,
+              }}
+            >
+              <SidebarInner collapsed={false} />
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* ── RIGHT SIDE (header + content) ── */}
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
+        minWidth: 0,
+      }}>
+
+        {/* ── TOP HEADER ── */}
+        <div style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 100,
+          background: colors.glass,
+          backdropFilter: 'blur(24px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+          borderBottom: `1px solid ${scrolled ? colors.border : 'rgba(255,255,255,0.04)'}`,
+          padding: '0 24px',
+          height: 66,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          transition: 'border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+          boxShadow: scrolled
+            ? (theme === 'dark' ? '0 10px 30px -10px rgba(0,0,0,0.6)' : '0 10px 25px -10px rgba(0,0,0,0.08)')
+            : 'none',
+        }}>
+
+          {/* Left Actions & Breadcrumb */}
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+            {/* Back Button */}
+            <motion.button
+              whileHover={{ scale: 1.05, y: -1 }}
+              whileTap={{ scale: 0.92 }}
+              onClick={() => navigate(-1)}
+              style={{
+                width: 40, height: 40,
+                borderRadius: 12,
+                border: `1px solid ${colors.border}`,
+                background: colors.surface,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                outline: 'none',
+                flexShrink: 0,
+                color: colors.text,
+                transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+              }}
+              title="Go Back"
+            >
+              <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"/>
+                <polyline points="12 19 5 12 12 5"/>
+              </svg>
+            </motion.button>
+
+            {/* Hamburger (mobile only) */}
+            <motion.button
+              className="mobile-menu-btn"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.92 }}
+              onClick={() => setSidebarOpen(true)}
+              style={{
+                width: 40, height: 40,
+                borderRadius: 12,
+                border: `1px solid ${colors.border}`,
+                background: colors.surface,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                outline: 'none',
+                flexShrink: 0,
+                color: colors.text,
+              }}
+            >
+              <MenuIcon size={18} color={colors.text} />
+            </motion.button>
+
+            {/* Title / Breadcrumb Pill */}
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{
+                  fontSize: 11,
+                  fontWeight: 700,
+                  letterSpacing: '1px',
+                  textTransform: 'uppercase',
+                  color: A.gold,
+                }}>
+                  Osra Institute
+                </span>
+                <span style={{ fontSize: 10, color: colors.muted }}>/</span>
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={pageTitle}
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 4 }}
+                    transition={{ duration: 0.2 }}
+                    style={{
+                      fontWeight: 800,
+                      fontSize: 16,
+                      color: colors.text,
+                      letterSpacing: '-0.3px',
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    {pageTitle}
+                  </motion.span>
+                </AnimatePresence>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Controls */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            {/* Live System Online Pill (Desktop) */}
+            <div
+              style={{
+                display: 'none',
+                alignItems: 'center',
+                gap: 7,
+                padding: '6px 14px',
+                borderRadius: 20,
+                background: 'rgba(16, 185, 129, 0.1)',
+                border: '1px solid rgba(16, 185, 129, 0.25)',
+                fontSize: 12,
+                fontWeight: 600,
+                color: '#10b981',
+                boxShadow: '0 0 16px rgba(16, 185, 129, 0.12)',
+              }}
+              className="system-status-pill"
+            >
+              <span style={{
+                width: 7, height: 7,
+                borderRadius: '50%',
+                background: '#10b981',
+                boxShadow: '0 0 8px #10b981',
+                display: 'inline-block',
+                animation: 'pulse 2s infinite ease-in-out',
+              }} />
+              <span>System Live</span>
+            </div>
+
+            {/* Quick Language Toggle */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.92 }}
+              onClick={() => i18n.changeLanguage(i18n.language === 'en' ? 'si' : 'en')}
+              title={`Switch to ${i18n.language === 'en' ? 'Sinhala' : 'English'}`}
+              style={{
+                height: 38,
+                padding: '0 12px',
+                borderRadius: 11,
+                border: `1px solid ${colors.border}`,
+                background: colors.surface,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                cursor: 'pointer',
+                color: colors.text,
+                fontSize: 12,
+                fontWeight: 700,
+                letterSpacing: '0.4px',
+              }}
+            >
+              <GlobeIcon size={14} color={A.gold} />
+              <span>{i18n.language === 'si' ? 'සිං' : 'EN'}</span>
+            </motion.button>
+
+            {/* Direct Theme Toggle */}
+            <motion.button
+              whileHover={{ scale: 1.08, rotate: 15 }}
+              whileTap={{ scale: 0.9, rotate: -30 }}
+              onClick={toggleColorMode}
+              title={mode === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              style={{
+                width: 38, height: 38,
+                borderRadius: 11,
+                border: `1px solid ${colors.border}`,
+                background: colors.surface,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                outline: 'none',
+                color: mode === 'dark' ? A.amber : A.gold,
+                boxShadow: mode === 'dark' ? '0 0 12px rgba(245,158,11,0.2)' : 'none',
+              }}
+            >
+              {mode === 'dark' ? <SunIcon size={18} color={A.amber} /> : <MoonIcon size={18} color={A.gold} />}
+            </motion.button>
+
+            {/* User Avatar with Glowing Accent */}
+            <motion.div
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.94 }}
+              onClick={() => setAdminSettingsOpen(true)}
+              style={{
+                width: 40, height: 40,
+                borderRadius: 13,
+                padding: 2,
+                background: `linear-gradient(135deg, ${A.gold} 0%, ${A.amber} 50%, ${A.cyan} 100%)`,
+                boxShadow: `0 4px 18px rgba(212, 175, 55, 0.4)`,
+                cursor: 'pointer',
+                flexShrink: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              title="Admin Profile & Credentials Settings"
+            >
+              <div style={{
+                width: '100%', height: '100%',
+                borderRadius: 11,
+                background: colors.bg,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 800,
+                fontSize: 14,
+                color: A.gold,
+                letterSpacing: '-0.3px',
+              }}>
+                A
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* ── PAGE CONTENT ── */}
+        <div
+          className="main-scroll-area"
+          style={{
+            flex: 1,
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            padding: '22px 18px 100px',
+          }}
+        >
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={location.pathname}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.22, ease: 'easeOut' }}
+            >
+              <Outlet />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* ── BOTTOM NAV (mobile only) ── */}
+      <div
+        className="bottom-nav"
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 150,
+          background: colors.glass,
+          borderTop: `1px solid ${colors.border}`,
+          display: 'flex',
+          alignItems: 'stretch',
+          padding: '4px 6px 8px',
+          boxShadow: `0 -2px 24px rgba(0,0,0,0.1)`,
+        }}
+      >
+        {NAV_ITEMS.map(item => (
+          <BottomNavItem
+            key={item.path}
+            item={item}
+            active={isActive(item.path)}
+            onClick={() => handleNav(item.path)}
+            theme={theme}
+          />
+        ))}
+      </div>
+
+      {/* ── Global CSS ── */}
+      <style>{`
+        @media (min-width: 900px) {
+          .desktop-sidebar { display: block !important; position: sticky !important; }
+          .mobile-menu-btn { display: none !important; }
+          .bottom-nav { display: none !important; }
+          .system-status-pill { display: inline-flex !important; }
+        }
+        @media (max-width: 899px) {
+          .desktop-sidebar { display: none !important; }
+        }
+        .nav-hover-bg:hover { opacity: 1 !important; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-thumb {
+          background: rgba(212, 175, 55, 0.35);
+          border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+          background: rgba(212, 175, 55, 0.6);
+        }
+        ::-webkit-scrollbar-track { background: transparent; }
+        button { outline: none; }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.4; transform: scale(0.85); }
+        }
+      `}</style>
+
+      {/* ── ADMIN CREDENTIALS SETTINGS DIALOG ── */}
+      <AdminSettingsDialog
+        open={adminSettingsOpen}
+        onClose={() => setAdminSettingsOpen(false)}
+      />
+    </div>
+  );
+}

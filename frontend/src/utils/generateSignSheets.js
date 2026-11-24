@@ -1,0 +1,271 @@
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { setupPdfFont } from './pdfUtils';
+
+/**
+ * Generates a Black & White Class Fee Sign Sheet PDF for a given grade.
+ * @param {Array} students - List of students in the grade
+ * @param {string} grade - Selected grade (e.g. "Grade 10")
+ * @param {string} lang - Language ('en' or 'si')
+ */
+export const generateFeeSignSheetPDF = (students, grade, lang = 'en') => {
+    if (!students || students.length === 0) {
+        return { success: false, error: lang === 'si' ? 'මෙම ශ්‍රේණිය සඳහා සිසුන් හමු නොවීය.' : 'No students found for this grade.' };
+    }
+
+    // 1. Extract unique subjects enrolled by students in this grade
+    const gradeSubjectsSet = new Set();
+    students.forEach(student => {
+        (student.enrollments || []).forEach(e => {
+            if (e.subject) {
+                gradeSubjectsSet.add(e.subject);
+            }
+        });
+    });
+    const gradeSubjects = Array.from(gradeSubjectsSet).sort();
+
+    if (gradeSubjects.length === 0) {
+        return { success: false, error: lang === 'si' ? 'මෙම ශ්‍රේණියේ කිසිදු විෂයකට ලියාපදිංචි වී ඇති සිසුන් හමු නොවීය.' : 'No active subject enrollments found in this grade.' };
+    }
+
+    // Always use landscape for better writing space
+    const isLandscape = true;
+    const doc = new jsPDF('landscape', 'mm', 'a4');
+    setupPdfFont(doc, lang);
+
+    const pageWidth = doc.internal.pageSize.width;
+
+    // --- Header Section (B&W Style) ---
+    doc.setFontSize(22);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont(lang === 'si' ? 'NotoSansSinhala' : 'helvetica', 'bold');
+    doc.text(lang === 'si' ? "ඔස්රා උසස් අධ්‍යාපන ආයතනය" : "OSRA EDUCATION INSTITUTE", 14, 18);
+
+    doc.setFontSize(13);
+    doc.text(lang === 'si' ? "පන්ති ගාස්තු අත්සන් පත්‍රය" : "CLASS FEE SIGN SHEET", 14, 25);
+
+    // Dotted month space and grade info
+    doc.setFontSize(10);
+    doc.setFont(lang === 'si' ? 'NotoSansSinhala' : 'helvetica', 'normal');
+    doc.text(`${lang === 'si' ? 'ශ්‍රේණිය' : 'Grade'}: ${grade}`, 14, 33);
+    doc.text(`${lang === 'si' ? 'මාසය' : 'Month'}: ....................................................`, pageWidth / 2 - 30, 33);
+    doc.text(`${lang === 'si' ? 'දිනය' : 'Date'}: .........................`, pageWidth - 50, 33);
+
+    // --- Table Headers ---
+    const colName = lang === 'si' ? 'ශිෂ්‍ය නාමය' : 'Student Name';
+    const headers = [colName, ...gradeSubjects];
+
+    // Light watermark placeholder
+    const cellPlaceholder = lang === 'si' ? 'දිනය / අත්සන' : 'Date / Sign';
+
+    // --- Table Rows ---
+    const rows = [];
+    students.forEach((student) => {
+        const row = [student.name];
+        gradeSubjects.forEach(subject => {
+            const enrolled = (student.enrollments || []).some(e => e.subject === subject);
+            row.push(enrolled ? cellPlaceholder : "N/A"); // Placeholders for enrolled, "N/A" for non-enrolled
+        });
+        rows.push(row);
+    });
+
+    // --- Generate Grid ---
+    autoTable(doc, {
+        head: [headers],
+        body: rows,
+        startY: 38,
+        theme: 'grid',
+        styles: {
+            font: lang === 'si' ? 'NotoSansSinhala' : 'helvetica',
+            fontSize: 9,
+            textColor: [0, 0, 0],
+            lineColor: [100, 100, 100],
+            lineWidth: 0.15,
+            cellPadding: 3, // Reduced padding to fit more rows
+            minCellHeight: 14, // Reduced height to save pages but spacious enough
+        },
+        headStyles: {
+            fillColor: [230, 230, 230], // Light gray header
+            textColor: [0, 0, 0],
+            fontStyle: 'bold',
+            halign: 'center',
+            valign: 'middle'
+        },
+        columnStyles: {
+            0: { cellWidth: 70 } // Student Name fixed width
+        },
+        didParseCell: (data) => {
+            // Style active cells
+            if (data.section === 'body' && data.column.index >= 1) {
+                if (data.cell.raw === "N/A") {
+                    data.cell.styles.halign = 'center';
+                    data.cell.styles.valign = 'middle';
+                    data.cell.styles.fillColor = [240, 240, 240]; // Darker gray for N/A
+                    data.cell.styles.textColor = [130, 130, 130];
+                } else {
+                    data.cell.styles.fontSize = 8;
+                    data.cell.styles.textColor = [180, 180, 180]; // Light gray watermark
+                    data.cell.styles.halign = 'left';
+                    data.cell.styles.valign = 'top'; // Top-left to leave space in middle
+                    data.cell.styles.fillColor = [255, 255, 255]; // Enrolled = white blank
+                }
+            }
+        },
+        margin: { top: 38, left: 14, right: 14, bottom: 15 },
+        didDrawPage: (data) => {
+            // Footer
+            doc.setFontSize(8);
+            doc.setTextColor(120);
+            doc.text("Osra Institute Management System • B&W Sign Sheet", 14, doc.internal.pageSize.height - 8);
+            doc.text(
+                `${lang === 'si' ? 'පිටුව' : 'Page'} ${data.pageNumber} / ${doc.internal.getNumberOfPages()}`, 
+                doc.internal.pageSize.width - 28, 
+                doc.internal.pageSize.height - 8
+            );
+        }
+    });
+
+    doc.save(`Fee_Sign_Sheet_${grade.replace(/\s+/g, '_')}.pdf`);
+    return { success: true };
+};
+
+/**
+ * Generates a Black & White Tute Issue Sign Sheet PDF for Mathematics.
+ * @param {Array} students - List of students in the grade
+ * @param {string} grade - Selected grade (e.g. "Grade 10")
+ * @param {string} lang - Language ('en' or 'si')
+ */
+export const generateTuteSignSheetPDF = (students, grade, lang = 'en') => {
+    if (!students || students.length === 0) {
+        return { success: false, error: lang === 'si' ? 'මෙම ශ්‍රේණිය සඳහා සිසුන් හමු නොවීය.' : 'No students found for this grade.' };
+    }
+
+    // Filter students enrolled in Mathematics
+    const mathStudents = students.filter(student => {
+        return (student.enrollments || []).some(e => {
+            const subName = (e.subject || "").toLowerCase();
+            return subName.includes("math"); // Matches Mathematics, Maths, etc.
+        });
+    });
+
+    if (mathStudents.length === 0) {
+        return { success: false, error: lang === 'si' ? 'මෙම ශ්‍රේණියේ ගණිතය (Mathematics) විෂයට ලියාපදිංචි වී ඇති සිසුන් හමු නොවීය.' : 'No students enrolled in Mathematics found in this grade.' };
+    }
+
+    // Always use landscape for Tute sheet to fit all 6 columns comfortably
+    const doc = new jsPDF('landscape', 'mm', 'a4');
+    setupPdfFont(doc, lang);
+
+    const pageWidth = doc.internal.pageSize.width;
+
+    // --- Header Section (B&W Style) ---
+    doc.setFontSize(22);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont(lang === 'si' ? 'NotoSansSinhala' : 'helvetica', 'bold');
+    doc.text(lang === 'si' ? "ඔස්රා උසස් අධ්‍යාපන ආයතනය" : "OSRA EDUCATION INSTITUTE", 14, 18);
+
+    doc.setFontSize(13);
+    doc.text(
+        lang === 'si' 
+            ? "නිබන්ධන නිකුත් කිරීම් අත්සන් පත්‍රය - ගණිතය" 
+            : "TUTE ISSUE SIGN SHEET - MATHEMATICS", 
+        14, 
+        25
+    );
+
+    // Info details
+    doc.setFontSize(10);
+    doc.setFont(lang === 'si' ? 'NotoSansSinhala' : 'helvetica', 'normal');
+    doc.text(`${lang === 'si' ? 'ශ්‍රේණිය' : 'Grade'}: ${grade}`, 14, 33);
+    doc.text(`${lang === 'si' ? 'මාසය' : 'Month'}: ....................................................`, pageWidth / 2 - 30, 33);
+    doc.text(`${lang === 'si' ? 'දිනය' : 'Date'}: .........................`, pageWidth - 50, 33);
+
+    // --- Table Headers ---
+    const colName = lang === 'si' ? 'ශිෂ්‍ය නාමය' : 'Student Name';
+    
+    // Customized term tute columns as requested by the user
+    const tuteCols = lang === 'si' ? [
+        '1 වාරය\nටියුට් 01',
+        '1 වාරය\nටියුට් 02',
+        '2 වාරය\nටියුට් 01',
+        '2 වාරය\nටියුට් 02',
+        '3 වාරය\nටියුට් 01',
+        '3 වාරය\nටියුට් 02'
+    ] : [
+        '1st Term\nTute 01',
+        '1st Term\nTute 02',
+        '2nd Term\nTute 01',
+        '2nd Term\nTute 02',
+        '3rd Term\nTute 01',
+        '3rd Term\nTute 02'
+    ];
+
+    const headers = [colName, ...tuteCols];
+
+    // Light watermark placeholder
+    const cellPlaceholder = lang === 'si' ? 'අත්සන' : 'Sign';
+
+    // --- Table Rows ---
+    const rows = [];
+    mathStudents.forEach((student) => {
+        const row = [student.name, cellPlaceholder, cellPlaceholder, cellPlaceholder, cellPlaceholder, cellPlaceholder, cellPlaceholder];
+        rows.push(row);
+    });
+
+    // --- Generate Grid ---
+    autoTable(doc, {
+        head: [headers],
+        body: rows,
+        startY: 38,
+        theme: 'grid',
+        styles: {
+            font: lang === 'si' ? 'NotoSansSinhala' : 'helvetica',
+            fontSize: 9,
+            textColor: [0, 0, 0],
+            lineColor: [100, 100, 100],
+            lineWidth: 0.15,
+            cellPadding: 3, // Reduced padding
+            minCellHeight: 14, // Reduced height to save pages
+        },
+        headStyles: {
+            fillColor: [230, 230, 230], // Light gray header
+            textColor: [0, 0, 0],
+            fontStyle: 'bold',
+            halign: 'center',
+            valign: 'middle',
+            fontSize: 8.5 // Slightly smaller to fit vertical text
+        },
+        columnStyles: {
+            0: { cellWidth: 65 }, // Student Name gets fixed width
+            1: { cellWidth: 34 }, // 1st Term Tute 01
+            2: { cellWidth: 34 }, // 1st Term Tute 02
+            3: { cellWidth: 34 }, // 2nd Term Tute 01
+            4: { cellWidth: 34 }, // 2nd Term Tute 02
+            5: { cellWidth: 34 }, // 3rd Term Tute 01
+            6: { cellWidth: 34 }  // 3rd Term Tute 02
+        },
+        didParseCell: (data) => {
+            if (data.section === 'body' && data.column.index >= 1) {
+                data.cell.styles.fontSize = 8;
+                data.cell.styles.textColor = [180, 180, 180]; // Light gray watermark
+                data.cell.styles.halign = 'left';
+                data.cell.styles.valign = 'top'; // Top-left to leave space in middle
+            }
+        },
+        margin: { top: 38, left: 14, right: 14, bottom: 15 },
+        didDrawPage: (data) => {
+            // Footer
+            doc.setFontSize(8);
+            doc.setTextColor(120);
+            doc.text("Osra Institute Management System • B&W Tute Sheet", 14, doc.internal.pageSize.height - 8);
+            doc.text(
+                `${lang === 'si' ? 'පිටුව' : 'Page'} ${data.pageNumber} / ${doc.internal.getNumberOfPages()}`, 
+                doc.internal.pageSize.width - 28, 
+                doc.internal.pageSize.height - 8
+            );
+        }
+    });
+
+    doc.save(`Tute_Sign_Sheet_${grade.replace(/\s+/g, '_')}.pdf`);
+    return { success: true };
+};

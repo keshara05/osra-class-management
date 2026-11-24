@@ -1,0 +1,500 @@
+import React, { useState } from 'react';
+import {
+    Box,
+    TextField,
+    Button,
+    Typography,
+    Container,
+    Paper,
+    InputAdornment,
+    Grid,
+    IconButton,
+    Tooltip,
+    alpha,
+    useTheme,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem
+} from '@mui/material';
+import { motion } from 'framer-motion';
+import { MenuBook, Description, AddCircleOutline, CheckCircle, AttachMoney, CloudUpload, Person } from '@mui/icons-material';
+import { Avatar } from '@mui/material';
+import API_BASE_URL from '../config';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
+const MotionContainer = motion(Container);
+const MotionPaper = motion(Paper);
+
+const colors = [
+    '#e3f2fd', '#e8f5e9', '#fff3e0', '#f3e5f5',
+    '#ffebee', '#f1f8e9', '#e0f7fa', '#fff8e1'
+];
+
+export default function AddSubject() {
+    const navigate = useNavigate();
+    const theme = useTheme();
+
+    const [formData, setFormData] = useState({
+        name: '',
+        description: '',
+        fee: 0,
+        feeType: 'monthly',
+        classDaysCount: 5,
+        color: colors[0],
+        teacherName: '',
+        teacherDescription: '',
+        teacherImage: ''
+    });
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleColorSelect = (selectedColor) => {
+        setFormData({ ...formData, color: selectedColor });
+    };
+
+    const handleTeacherPhotoChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            if (file.size > 2 * 1024 * 1024) {
+                alert('Image size must be under 2MB');
+                return;
+            }
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                setFormData(prev => ({ ...prev, teacherImage: reader.result }));
+            };
+            reader.onerror = (err) => {
+                console.error(err);
+                alert('Error reading image file');
+            };
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await axios.post(`${API_BASE_URL}/api/subjects`, formData);
+            alert('Subject Added Successfully');
+            navigate('/');
+        } catch (error) {
+            console.error(error);
+            alert(error.response?.data?.message || 'Error adding subject');
+        }
+    };
+
+    const containerVariants = {
+        hidden: { opacity: 0, y: 50 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: { duration: 0.6, ease: "easeOut", staggerChildren: 0.15 }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+    };
+
+    return (
+        <MotionContainer
+            maxWidth="md"
+            initial="hidden"
+            animate="visible"
+            variants={containerVariants}
+            sx={{
+                py: 5,
+                minHeight: '80vh',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+            }}
+        >
+            <MotionPaper
+                elevation={0}
+                variants={itemVariants}
+                sx={{
+                    p: { xs: 3, md: 6 },
+                    borderRadius: 4,
+                    width: '100%',
+                    background: theme.palette.background.paper,
+                    boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.2)',
+                    border: `1px solid ${theme.palette.divider}`,
+                    position: 'relative',
+                    overflow: 'hidden'
+                }}
+            >
+                {/* Holographic Orbs */}
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: -100,
+                        left: -100,
+                        width: 300,
+                        height: 300,
+                        borderRadius: '50%',
+                        background: 'radial-gradient(circle, rgba(6,182,212,0.2) 0%, transparent 70%)',
+                        zIndex: 0,
+                    }}
+                />
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        bottom: -100,
+                        right: -100,
+                        width: 300,
+                        height: 300,
+                        borderRadius: '50%',
+                        background: 'radial-gradient(circle, rgba(217,70,239,0.2) 0%, transparent 70%)',
+                        zIndex: 0,
+                    }}
+                />
+
+                <Box sx={{ position: 'relative', zIndex: 1 }}>
+                    <Typography
+                        variant="h3"
+                        component={motion.h3}
+                        variants={itemVariants}
+                        gutterBottom
+                        sx={{
+                            fontWeight: 700,
+                            color: 'text.primary',
+                            textAlign: 'center',
+                            fontSize: { xs: '1.75rem', md: '2.5rem' },
+                            textShadow: '0 0 20px rgba(59, 130, 246, 0.5)'
+                        }}
+                    >
+                        Create New Subject
+                    </Typography>
+                    <Typography
+                        variant="body1"
+                        component={motion.p}
+                        variants={itemVariants}
+                        align="center"
+                        sx={{ mb: 5, color: 'text.secondary', maxWidth: '600px', mx: 'auto' }}
+                    >
+                        Define a new subject for your curriculum. Choose a distinct name and color theme to organize your schedule effectively.
+                    </Typography>
+
+                    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+                        <Grid container spacing={4}>
+                            <Grid item xs={12} md={7}>
+                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                                    <motion.div variants={itemVariants}>
+                                        <TextField
+                                            fullWidth
+                                            label="Subject Name"
+                                            name="name"
+                                            variant="outlined"
+                                            required
+                                            onChange={handleChange}
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <MenuBook sx={{ color: 'primary.main' }} />
+                                                    </InputAdornment>
+                                                ),
+                                            }}
+                                            sx={{
+                                                '& .MuiOutlinedInput-root': {
+                                                    borderRadius: 2,
+                                                    bgcolor: alpha(theme.palette.background.paper, 0.4),
+                                                    color: 'text.primary',
+                                                    border: '1px solid rgba(255,255,255,0.1)',
+                                                    '&:hover fieldset': { borderColor: 'primary.main' },
+                                                },
+                                                '& .MuiInputLabel-root': { color: 'text.secondary' }
+                                            }}
+                                        />
+                                    </motion.div>
+
+
+
+                                    <motion.div variants={itemVariants}>
+                                        <FormControl fullWidth sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                borderRadius: 2,
+                                                bgcolor: alpha(theme.palette.background.paper, 0.4),
+                                                color: 'text.primary',
+                                                border: '1px solid rgba(255,255,255,0.1)',
+                                                '&:hover fieldset': { borderColor: 'primary.main' },
+                                            },
+                                            '& .MuiInputLabel-root': { color: 'text.secondary' }
+                                        }}>
+                                            <InputLabel id="fee-type-label">Payment Type</InputLabel>
+                                            <Select
+                                                labelId="fee-type-label"
+                                                name="feeType"
+                                                value={formData.feeType}
+                                                onChange={handleChange}
+                                                label="Payment Type"
+                                            >
+                                                <MenuItem value="monthly">Monthly Fee</MenuItem>
+                                                <MenuItem value="daily">Day Fee</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                    </motion.div>
+
+                                    <motion.div variants={itemVariants}>
+                                        <TextField
+                                            fullWidth
+                                            label="Class Days per Month (Sessions) *"
+                                            name="classDaysCount"
+                                            type="number"
+                                            value={formData.classDaysCount}
+                                            required
+                                            onChange={handleChange}
+                                            sx={{
+                                                '& .MuiOutlinedInput-root': {
+                                                    borderRadius: 2,
+                                                    bgcolor: alpha(theme.palette.background.paper, 0.4),
+                                                    color: 'text.primary',
+                                                    border: '1px solid rgba(255,255,255,0.1)',
+                                                    '&:hover fieldset': { borderColor: 'primary.main' },
+                                                },
+                                                '& .MuiInputLabel-root': { color: 'text.secondary' }
+                                            }}
+                                        />
+                                    </motion.div>
+
+                                    <motion.div variants={itemVariants}>
+                                        <TextField
+                                            fullWidth
+                                            label={formData.feeType === 'daily' ? "Day Fee (Rs.) *" : "Monthly Fee (Rs.) *"}
+                                            name="fee"
+                                            type="number"
+                                            value={formData.fee}
+                                            required
+                                            onChange={handleChange}
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <AttachMoney sx={{ color: 'primary.main' }} />
+                                                    </InputAdornment>
+                                                ),
+                                            }}
+                                            sx={{
+                                                '& .MuiOutlinedInput-root': {
+                                                    borderRadius: 2,
+                                                    bgcolor: alpha(theme.palette.background.paper, 0.4),
+                                                    color: 'text.primary',
+                                                    border: '1px solid rgba(255,255,255,0.1)',
+                                                    '&:hover fieldset': { borderColor: 'primary.main' },
+                                                },
+                                                '& .MuiInputLabel-root': { color: 'text.secondary' }
+                                            }}
+                                        />
+                                    </motion.div>
+
+                                    <motion.div variants={itemVariants}>
+                                        <TextField
+                                            fullWidth
+                                            label="Description (Optional)"
+                                            name="description"
+                                            variant="outlined"
+                                            multiline
+                                            rows={4}
+                                            onChange={handleChange}
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <InputAdornment position="start" sx={{ mt: 1.5, alignSelf: 'flex-start' }}>
+                                                        <Description sx={{ color: 'primary.main' }} />
+                                                    </InputAdornment>
+                                                ),
+                                            }}
+                                            sx={{
+                                                '& .MuiOutlinedInput-root': {
+                                                    borderRadius: 2,
+                                                    bgcolor: alpha(theme.palette.background.paper, 0.4),
+                                                    color: 'text.primary',
+                                                    border: '1px solid rgba(255,255,255,0.1)',
+                                                    '&:hover fieldset': { borderColor: 'primary.main' },
+                                                },
+                                                '& .MuiInputLabel-root': { color: 'text.secondary' }
+                                            }}
+                                        />
+                                    </motion.div>
+
+                                    <motion.div variants={itemVariants}>
+                                        <Box sx={{
+                                            mt: 1, p: 3, borderRadius: 3,
+                                            border: '1px dashed rgba(255,255,255,0.15)',
+                                            bgcolor: 'rgba(255,255,255,0.02)',
+                                            display: 'flex', flexDirection: 'column', gap: 2.5
+                                        }}>
+                                            <Typography variant="subtitle1" fontWeight={700} sx={{ color: 'primary.main', display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                <Person sx={{ fontSize: 20 }} /> Assign Teacher (Optional)
+                                            </Typography>
+                                            <Typography variant="caption" color="text.secondary" sx={{ mt: -1.5, mb: 1, display: 'block' }}>
+                                                Provide details to automatically create and link a teacher to this subject.
+                                            </Typography>
+
+                                            <TextField
+                                                fullWidth
+                                                label="Teacher's Name"
+                                                name="teacherName"
+                                                value={formData.teacherName}
+                                                onChange={handleChange}
+                                                sx={{
+                                                    '& .MuiOutlinedInput-root': {
+                                                        borderRadius: 2,
+                                                        bgcolor: alpha(theme.palette.background.paper, 0.4),
+                                                        color: 'text.primary',
+                                                        border: '1px solid rgba(255,255,255,0.1)',
+                                                        '&:hover fieldset': { borderColor: 'primary.main' },
+                                                    },
+                                                    '& .MuiInputLabel-root': { color: 'text.secondary' }
+                                                }}
+                                            />
+
+                                            <TextField
+                                                fullWidth
+                                                label="Teacher Qualifications / Description"
+                                                name="teacherDescription"
+                                                value={formData.teacherDescription}
+                                                onChange={handleChange}
+                                                multiline
+                                                rows={2}
+                                                sx={{
+                                                    '& .MuiOutlinedInput-root': {
+                                                        borderRadius: 2,
+                                                        bgcolor: alpha(theme.palette.background.paper, 0.4),
+                                                        color: 'text.primary',
+                                                        border: '1px solid rgba(255,255,255,0.1)',
+                                                        '&:hover fieldset': { borderColor: 'primary.main' },
+                                                    },
+                                                    '& .MuiInputLabel-root': { color: 'text.secondary' }
+                                                }}
+                                            />
+
+                                            {/* Photo Upload with Preview */}
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                                <Avatar
+                                                    src={formData.teacherImage}
+                                                    sx={{ width: 60, height: 60, border: '2px solid rgba(255,255,255,0.1)' }}
+                                                />
+                                                <Box>
+                                                    <Button
+                                                        variant="outlined"
+                                                        component="label"
+                                                        size="small"
+                                                        startIcon={<CloudUpload />}
+                                                        sx={{ borderRadius: 2, textTransform: 'none' }}
+                                                    >
+                                                        Upload Photo
+                                                        <input type="file" hidden accept="image/*" onChange={handleTeacherPhotoChange} />
+                                                    </Button>
+                                                    <Typography variant="caption" display="block" color="text.secondary" sx={{ mt: 0.5 }}>
+                                                        Square photo is recommended.
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
+                                        </Box>
+                                    </motion.div>
+                                </Box>
+                            </Grid>
+
+                            <Grid item xs={12} md={5}>
+                                <motion.div variants={itemVariants} style={{ height: '100%' }}>
+                                    <Paper
+                                        elevation={0}
+                                        sx={{
+                                            p: 3,
+                                            height: '100%',
+                                            borderRadius: 3,
+                                            bgcolor: alpha(formData.color, 0.15),
+                                            border: '1px dashed',
+                                            borderColor: 'rgba(255,255,255,0.2)',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
+                                        }}
+                                    >
+                                        <Typography variant="subtitle1" fontWeight={600} gutterBottom sx={{ color: 'text.primary' }}>
+                                            Theme Color
+                                        </Typography>
+                                        <Grid container spacing={1} justifyContent="center" sx={{ maxWidth: 200 }}>
+                                            {colors.map((color) => (
+                                                <Grid item key={color}>
+                                                    <Tooltip title="Select Color">
+                                                        <IconButton
+                                                            onClick={() => handleColorSelect(color)}
+                                                            sx={{
+                                                                bgcolor: color,
+                                                                width: 36,
+                                                                height: 36,
+                                                                border: formData.color === color ? `2px solid ${theme.palette.primary.main}` : '1px solid rgba(255,255,255,0.2)',
+                                                                transform: formData.color === color ? 'scale(1.1)' : 'scale(1)',
+                                                                transition: 'all 0.2s',
+                                                                '&:hover': { transform: 'scale(1.15)' }
+                                                            }}
+                                                        >
+                                                            {formData.color === color && <CheckCircle sx={{ fontSize: 20, color: 'primary.dark' }} />}
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </Grid>
+                                            ))}
+                                        </Grid>
+                                        <Box
+                                            sx={{
+                                                mt: 3,
+                                                p: 2,
+                                                bgcolor: 'rgba(0,0,0,0.4)',
+                                                borderRadius: 2,
+                                                boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.5)',
+                                                width: '100%',
+                                                textAlign: 'center',
+                                                border: '1px solid rgba(255,255,255,0.05)'
+                                            }}
+                                        >
+                                            <Typography variant="caption" display="block" color="text.secondary">Preview</Typography>
+                                            <Typography variant="h6" sx={{ color: 'primary.main', fontWeight: 600 }}>
+                                                {formData.name || "Subject Name"}
+                                            </Typography>
+                                        </Box>
+                                    </Paper>
+                                </motion.div>
+                            </Grid>
+
+                            <Grid item xs={12}>
+                                <motion.div variants={itemVariants}>
+                                    <Button
+                                        component={motion.button}
+                                        whileHover={{ scale: 1.02, boxShadow: '0 0 20px rgba(59, 130, 246, 0.6)' }}
+                                        whileTap={{ scale: 0.98 }}
+                                        type="submit"
+                                        variant="contained"
+                                        size="large"
+                                        endIcon={<AddCircleOutline />}
+                                        sx={{
+                                            mt: 1,
+                                            py: 1.5,
+                                            px: 6,
+                                            borderRadius: 3,
+                                            textTransform: 'none',
+                                            fontSize: '1.1rem',
+                                            fontWeight: 600,
+                                            background: 'linear-gradient(135deg, #f5d77f 0%, #d4af37 50%, #aa820a 100%)',
+                                            boxShadow: '0 4px 14px 0 rgba(37, 99, 235, 0.39)',
+                                            display: 'block',
+                                            mx: 'auto',
+                                            border: '1px solid rgba(255,255,255,0.2)'
+                                        }}
+                                    >
+                                        Add Subject
+                                    </Button>
+                                </motion.div>
+                            </Grid>
+                        </Grid>
+                    </Box>
+                </Box>
+            </MotionPaper>
+        </MotionContainer>
+    );
+}

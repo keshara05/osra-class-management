@@ -1,0 +1,227 @@
+import React from 'react';
+import { Box, Typography, Paper, alpha, useTheme, Chip } from '@mui/material';
+import StatusCell from './StatusCell';
+import { motion } from 'framer-motion';
+import { isNotEnrolledInMonth } from './MultiSubjectFeeDialog';
+
+const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+const SubjectGrid = ({ student, studentId, studentGrade, enrollments, onUpdate, subjectColorMap, isMobile }) => {
+    const theme = useTheme();
+
+    return (
+        <Box sx={{ p: isMobile ? 0 : 1 }}>
+            {enrollments.map((enrollment, index) => {
+                const subjectData = subjectColorMap ? subjectColorMap[enrollment.subject] : null;
+                const color = subjectData ? subjectData.color : '#ffffff';
+
+                return (
+                    <Paper
+                        key={enrollment.subject}
+                        component={motion.div}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        sx={{
+                            mb: 3,
+                            p: isMobile ? 2 : 3,
+                            background: theme.palette.mode === 'dark' ? '#0d1222' : '#ffffff',
+                            borderRadius: '20px',
+                            border: `1px solid ${alpha(color, 0.25)}`,
+                            boxShadow: `0 4px 20px 0 ${alpha('#000000', 0.2)}`,
+                            overflow: 'hidden',
+                            position: 'relative'
+                        }}
+                        elevation={0}
+                    >
+                        {/* Decorative Glow */}
+                        <Box sx={{
+                            position: 'absolute', top: -50, right: -50, width: 150, height: 150,
+                            background: `radial-gradient(circle, ${alpha(color, 0.2)} 0%, transparent 70%)`,
+                            borderRadius: '50%', pointerEvents: 'none'
+                        }} />
+
+                        <Typography variant="h6" gutterBottom sx={{
+                            fontSize: isMobile ? '1.1rem' : '1.3rem',
+                            fontWeight: 700,
+                            color: color,
+                            textShadow: `0 0 20px ${alpha(color, 0.5)}`,
+                            mb: 3,
+                            display: 'flex', alignItems: 'center', gap: 1.5,
+                            pl: 1
+                        }}>
+                            <Box component={motion.div}
+                                animate={{ boxShadow: [`0 0 10px ${color}`, `0 0 20px ${color}`, `0 0 10px ${color}`] }}
+                                transition={{ duration: 2, repeat: Infinity }}
+                                sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: color }}
+                            />
+                            {enrollment.subject}
+                        </Typography>
+
+                        <Box sx={{
+                            display: 'flex',
+                            overflowX: 'auto',
+                            pb: 2,
+                            gap: 2,
+                            scrollbarWidth: 'thin',
+                            '&::-webkit-scrollbar': { height: '8px' },
+                            '&::-webkit-scrollbar-track': { background: 'rgba(255,255,255,0.02)', borderRadius: '4px' },
+                            '&::-webkit-scrollbar-thumb': {
+                                background: `linear-gradient(90deg, ${alpha(color, 0.2)} 0%, ${alpha(color, 0.5)} 100%)`,
+                                borderRadius: '4px',
+                                border: '2px solid rgba(0,0,0,0)' // creates padding around thumb
+                            },
+                            '&::-webkit-scrollbar-thumb:hover': {
+                                background: `linear-gradient(90deg, ${alpha(color, 0.4)} 0%, ${alpha(color, 0.8)} 100%)`,
+                            }
+                        }}>
+                            {enrollment.monthlyRecords.map((record, rIndex) => {
+                                const notEnrolled = isNotEnrolledInMonth(enrollment, student, record.monthIndex);
+                                const slots = Array.from({ length: Math.max(record.attendance?.length || 0, subjectData?.classDaysCount || 5) });
+
+                                return (
+                                    <Box
+                                        key={record.monthIndex}
+                                        component={motion.div}
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ delay: 0.2 + (rIndex * 0.05) }}
+                                        sx={{
+                                            border: `1px ${notEnrolled ? 'dashed' : 'solid'}`,
+                                            borderColor: notEnrolled ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.08)',
+                                            minWidth: 170,
+                                            p: 2.5,
+                                            textAlign: 'center',
+                                            bgcolor: notEnrolled ? 'rgba(255,255,255,0.008)' : 'rgba(255,255,255,0.015)',
+                                            borderRadius: '20px',
+                                            flexShrink: 0,
+                                            opacity: notEnrolled ? 0.4 : 1,
+                                            filter: notEnrolled ? 'grayscale(0.85)' : 'none',
+                                            transition: 'all 0.3s ease',
+                                            '&:hover': notEnrolled ? {} : {
+                                                borderColor: alpha(color, 0.4),
+                                                transform: 'translateY(-4px)',
+                                                bgcolor: 'rgba(255,255,255,0.03)',
+                                                boxShadow: `0 10px 20px -5px ${alpha(color, 0.15)}`
+                                            }
+                                        }}
+                                    >
+                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mb: 2 }}>
+                                            <Typography variant="caption" display="block" sx={{
+                                                fontWeight: '800',
+                                                textTransform: 'uppercase',
+                                                letterSpacing: 3,
+                                                color: notEnrolled ? 'text.disabled' : 'text.secondary',
+                                                fontSize: '0.75rem'
+                                            }}>
+                                                {months[record.monthIndex]}
+                                            </Typography>
+                                            {notEnrolled && (
+                                                <Chip
+                                                    label="N/E"
+                                                    size="small"
+                                                    sx={{
+                                                        fontSize: '0.6rem',
+                                                        height: 16,
+                                                        px: 0.2,
+                                                        bgcolor: 'rgba(255,255,255,0.05)',
+                                                        color: 'text.disabled',
+                                                        fontWeight: 700
+                                                    }}
+                                                />
+                                            )}
+                                        </Box>
+
+                                        {notEnrolled && !record.feePaid ? (
+                                            <Box sx={{
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                py: 3.5,
+                                                gap: 0.8
+                                            }}>
+                                                <Chip
+                                                    label="Not Enrolled"
+                                                    size="small"
+                                                    variant="outlined"
+                                                    sx={{
+                                                        fontSize: '0.68rem',
+                                                        fontWeight: 700,
+                                                        color: 'text.disabled',
+                                                        borderColor: 'rgba(255,255,255,0.15)',
+                                                        background: 'rgba(255,255,255,0.03)',
+                                                        height: 22
+                                                    }}
+                                                />
+                                                <Typography variant="caption" sx={{ fontSize: '0.65rem', color: 'text.disabled', fontStyle: 'italic' }}>
+                                                    ලියාපදිංචි වී නැත
+                                                </Typography>
+                                            </Box>
+                                        ) : (
+                                            <>
+                                                <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mb: 2.5 }}>
+                                                    <StatusCell
+                                                        student={student}
+                                                        fee={subjectData ? subjectData.fee : 0}
+                                                        studentId={studentId}
+                                                        subject={enrollment.subject}
+                                                        monthIndex={record.monthIndex}
+                                                        type="fee"
+                                                        initialStatus={record.feePaid}
+                                                        onUpdate={onUpdate}
+                                                    />
+                                                    <StatusCell
+                                                        student={student}
+                                                        fee={subjectData ? subjectData.fee : 0}
+                                                        studentId={studentId}
+                                                        subject={enrollment.subject}
+                                                        monthIndex={record.monthIndex}
+                                                        type="tute"
+                                                        initialStatus={record.tutesGiven}
+                                                        onUpdate={onUpdate}
+                                                    />
+                                                </Box>
+
+                                                <Box sx={{
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    gap: 0.5,
+                                                    bgcolor: 'rgba(0,0,0,0.2)',
+                                                    p: 1.5,
+                                                    borderRadius: '16px',
+                                                    border: '1px solid rgba(255,255,255,0.02)'
+                                                }}>
+                                                    {slots.map((_, idx) => {
+                                                        return (
+                                                            <Box key={idx} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                                                <StatusCell
+                                                                    student={student}
+                                                                    fee={subjectData ? subjectData.fee : 0}
+                                                                    studentId={studentId}
+                                                                    subject={enrollment.subject}
+                                                                    monthIndex={record.monthIndex}
+                                                                    weekIndex={idx}
+                                                                    type="attendance"
+                                                                    initialStatus={record.attendance[idx] || false}
+                                                                    onUpdate={onUpdate}
+                                                                />
+                                                            </Box>
+                                                        );
+                                                    })}
+                                                </Box>
+                                            </>
+                                        )}
+                                    </Box>
+                                );
+                            })}
+                        </Box>
+                    </Paper>
+                );
+            })}
+        </Box>
+    );
+};
+
+export default SubjectGrid;
+

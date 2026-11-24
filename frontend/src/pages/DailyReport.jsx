@@ -1,0 +1,487 @@
+import React, { useState, useEffect } from 'react';
+import {
+    Box, Typography, Container, FormControl, InputLabel, Select, MenuItem, Button, Table, TableBody,
+    TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Alert, Grid,
+    Card, CardContent, useTheme, Chip, Avatar, InputAdornment, alpha, IconButton, Tooltip,
+    FormControlLabel, Checkbox, TextField
+} from '@mui/material';
+import axios from 'axios';
+import {
+    CalendarToday, Class, Book, Search, EventBusy, EventAvailable, CheckCircle, Cancel, Edit, WhatsApp, Close
+} from '@mui/icons-material';
+import API_BASE_URL from '../config';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const MotionContainer = motion(Container);
+const MotionPaper = motion(Paper);
+const MotionTableRow = motion(TableRow);
+
+const containerVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+        opacity: 1, y: 0,
+        transition: { duration: 0.6, ease: "easeOut", staggerChildren: 0.05 }
+    }
+};
+
+const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+};
+
+export default function DailyReport() {
+    const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+    const [grade, setGrade] = useState('');
+    const [subject, setSubject] = useState('');
+    const [subjectsList, setSubjectsList] = useState([]);
+    const [excludeFreeCard, setExcludeFreeCard] = useState(false);
+    
+    const [reportData, setReportData] = useState(null);
+    const [summary, setSummary] = useState({ total: 0, attended: 0, absent: 0, pending: 0, paidMonth: 0, unpaidMonth: 0, paidToday: 0 });
+    const [weekIndex, setWeekIndex] = useState(-1);
+    
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [dailySearch, setDailySearch] = useState('');
+
+    const theme = useTheme();
+
+    const displayedData = React.useMemo(() => {
+        if (!reportData) return [];
+        if (!dailySearch.trim()) return reportData;
+        const q = dailySearch.toLowerCase().trim();
+        return reportData.filter(row =>
+            row.name?.toLowerCase().includes(q) ||
+            row.indexNumber?.toLowerCase().includes(q)
+        );
+    }, [reportData, dailySearch]);
+
+    useEffect(() => {
+        const fetchSubjects = async () => {
+            try {
+                const response = await axios.get(`${API_BASE_URL}/api/subjects`);
+                setSubjectsList(response.data);
+            } catch (error) {
+                console.error("Failed to fetch subjects", error);
+            }
+        };
+        fetchSubjects();
+    }, []);
+
+    const calculateSummary = (students) => {
+        let attended = 0, absent = 0, pending = 0, paidMonth = 0, unpaidMonth = 0, paidToday = 0;
+        students.forEach(s => {
+            if (s.attendanceToday === true || s.attendanceToday === 'present' || s.attendanceToday === 'true') attended++;
+            else if (s.attendanceToday === 'absent' || s.attendanceToday === false || s.attendanceToday === 'false') absent++;
+            else pending++;
+
+            if (s.isFreeCard) {
+                // Exclude free cards from paid/unpaid counts
+            } else if (s.feePaidStatus) {
+                paidMonth++;
+            } else {
+                unpaidMonth++;
+            }
+
+            if (s.paidToday) paidToday++;
+        });
+
+        setSummary({
+            total: students.length,
+            attended, absent, pending, paidMonth, unpaidMonth, paidToday
+        });
+    };
+
+    const handleGenerate = async () => {
+        if (!date || !grade || !subject) {
+            setError("Please select all fields");
+            return;
+        }
+        setError(null);
+        setLoading(true);
+        setTimeout(async () => {
+            try {
+                const response = await axios.get(`${API_BASE_URL}/api/reports/daily`, {
+                    params: { date, grade, subject, excludeFreeCard }
+                });
+                setReportData(response.data.students);
+                setWeekIndex(response.data.weekIndex);
+                calculateSummary(response.data.students);
+            } catch (err) {
+                console.error("Error fetching report", err);
+                setError(err.response?.data?.message || "Failed to fetch report");
+                setReportData(null);
+            } finally {
+                setLoading(false);
+            }
+        }, 500);
+    };
+
+    const handleMarkAttendance = async (studentId, status) => {
+        try {
+            const reportDateObj = new Date(date);
+            const month = reportDateObj.getMonth();
+            
+            await axios.patch(`${API_BASE_URL}/api/attendance/${studentId}/${encodeURIComponent(subject)}/${month}/${weekIndex}`, {
+                status: status
+            });
+            
+            // Refresh data locally safely using functional update
+            setReportData(prevData => {
+                const updatedData = prevData.map(student => {
+                    if (student.id === studentId) {
+                        return { ...student, attendanceToday: status };
+                    }
+                    return student;
+                });
+                calculateSummary(updatedData);
+                return updatedData;
+            });
+        } catch (error) {
+            console.error("Error updating attendance:", error);
+            alert("Failed to update attendance.");
+        }
+    };
+
+    const handleToggleTute = async (studentId, currentStatus) => {
+        try {
+            const reportDateObj = new Date(date);
+            const month = reportDateObj.getMonth();
+            
+            await axios.patch(`${API_BASE_URL}/api/records/${studentId}/${encodeURIComponent(subject)}/${month}/tute`);
+            
+            // Refresh data locally safely using functional update
+            setReportData(prevData => {
+                return prevData.map(student => {
+                    if (student.id === studentId) {
+                        return { ...student, tutesGiven: !currentStatus };
+                    }
+                    return student;
+                });
+            });
+        } catch (error) {
+            console.error("Error updating tute status:", error);
+            alert("Failed to update tute status.");
+        }
+    };
+
+    const handleSendWhatsApp = (row) => {
+        if (!row.mobile) {
+            alert("No mobile number available for this student");
+            return;
+        }
+
+        let messageParts = [];
+        if (row.attendanceToday === true || row.attendanceToday === 'present' || row.attendanceToday === 'true') {
+            messageParts.push("- Has attended the class today.");
+        }
+        if (row.tutesGiven) {
+            messageParts.push("- Has received the Tute for this month.");
+        }
+
+        if (messageParts.length === 0) {
+            messageParts.push("- Has attended the class today.");
+        }
+
+        const msgText = `Dear Parent,
+*Osra Education Institute*
+
+Student: *${row.name}*
+Index: *${row.indexNumber}*
+Subject: *${subject}* (${grade})
+
+${messageParts.join('\n')}
+
+Thank you!`;
+
+        let cleanedMobile = row.mobile.replace(/[^\d+]/g, '').trim().replace('+', '');
+        if (cleanedMobile.startsWith('0')) {
+            cleanedMobile = '94' + cleanedMobile.slice(1);
+        }
+        if (cleanedMobile.length === 9 && !cleanedMobile.startsWith('94')) {
+            cleanedMobile = '94' + cleanedMobile;
+        }
+
+        const url = `https://wa.me/${cleanedMobile}?text=${encodeURIComponent(msgText)}`;
+        window.open(url, '_blank');
+    };
+
+    const StatCard = ({ title, value, color, icon }) => (
+        <Card component={motion.div} variants={itemVariants} sx={{
+            height: '100%',
+            background: theme.palette.background.paper,
+            borderRadius: 3,
+            border: `1px solid ${theme.palette.divider}`,
+            transition: 'transform 0.15s ease',
+            boxShadow: `0 4px 16px 0 ${alpha(color, 0.12)}`,
+            '&:hover': { transform: 'translateY(-2px)' }
+        }}>
+            <CardContent sx={{ display: 'flex', alignItems: 'center', p: { xs: 2, md: 3 } }}>
+                <Avatar sx={{ bgcolor: alpha(color, 0.1), color: color, width: 48, height: 48, mr: 2 }}>
+                    {icon}
+                </Avatar>
+                <Box>
+                    <Typography variant="body2" color="text.secondary" fontWeight={600} mb={0.5}>{title}</Typography>
+                    <Typography variant="h4" fontWeight={800} color="text.primary">{value}</Typography>
+                </Box>
+            </CardContent>
+        </Card>
+    );
+
+    const selectedSubjectObj = subjectsList.find(s => s.name === subject);
+    const isDaily = selectedSubjectObj && selectedSubjectObj.feeType === 'daily';
+
+    return (
+        <MotionContainer maxWidth="xl" initial="hidden" animate="visible" variants={containerVariants} sx={{ py: { xs: 2, md: 4 } }}>
+            <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Box sx={{ p: 1.5, borderRadius: '16px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white' }}>
+                    <EventAvailable fontSize="large" />
+                </Box>
+                <Box>
+                    <Typography variant="h4" sx={{ fontWeight: 800 }}>Daily Activity Report</Typography>
+                    <Typography variant="body2" color="text.secondary">Track today's attendance and fee collections</Typography>
+                </Box>
+            </Box>
+
+            <MotionPaper variants={itemVariants} elevation={0} sx={{ p: { xs: 2.5, md: 3 }, mb: 4, borderRadius: 4, background: theme.palette.background.paper, border: `1px solid ${theme.palette.divider}` }}>
+                <Grid container spacing={3} alignItems="center">
+                    <Grid item xs={12} sm={6} md={3}>
+                        <FormControl fullWidth size="small">
+                            <Typography variant="caption" color="text.secondary" mb={0.5} ml={1}>Select Date</Typography>
+                            <input
+                                type="date"
+                                value={date}
+                                onChange={(e) => setDate(e.target.value)}
+                                style={{
+                                    height: '40px', padding: '0 14px', borderRadius: '12px', border: `1px solid ${theme.palette.divider}`,
+                                    backgroundColor: alpha(theme.palette.background.paper, 0.4), color: theme.palette.text.primary,
+                                    fontSize: '1rem', fontFamily: 'inherit', outline: 'none'
+                                }}
+                            />
+                        </FormControl>
+                    </Grid>
+                    
+                    <Grid item xs={12} sm={6} md={3}>
+                        <FormControl fullWidth size="small">
+                            <Typography variant="caption" color="text.secondary" mb={0.5} ml={1}>Select Grade</Typography>
+                            <Select
+                                value={grade}
+                                onChange={(e) => setGrade(e.target.value)}
+                                sx={{ borderRadius: 3, bgcolor: alpha(theme.palette.background.paper, 0.4) }}
+                            >
+                                {[...Array(13)].map((_, i) => {
+                                    const gradeNum = (i + 1).toString().padStart(2, '0');
+                                    return <MenuItem key={gradeNum} value={`Grade ${gradeNum}`}>Grade {gradeNum}</MenuItem>;
+                                })}
+                                <MenuItem value="Rapid Revision">Rapid Revision</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+
+                    <Grid item xs={12} sm={6} md={3}>
+                        <FormControl fullWidth size="small">
+                            <Typography variant="caption" color="text.secondary" mb={0.5} ml={1}>Select Subject</Typography>
+                            <Select
+                                value={subject}
+                                onChange={(e) => setSubject(e.target.value)}
+                                sx={{ borderRadius: 3, bgcolor: alpha(theme.palette.background.paper, 0.4) }}
+                            >
+                                {subjectsList.map((sub) => (
+                                    <MenuItem key={sub._id} value={sub.name}>{sub.name}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+
+                    <Grid item xs={12} sm={6} md={3}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={excludeFreeCard}
+                                        onChange={(e) => setExcludeFreeCard(e.target.checked)}
+                                        size="small"
+                                        sx={{ color: '#a855f7', '&.Mui-checked': { color: '#a855f7' } }}
+                                    />
+                                }
+                                label={
+                                    <Typography variant="caption" fontWeight={600} color="text.primary">
+                                        Hide Free Card Students
+                                    </Typography>
+                                }
+                                sx={{ ml: 0, mb: -0.5 }}
+                            />
+                            <Button
+                                component={motion.button} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                                variant="contained" onClick={handleGenerate} disabled={loading} fullWidth
+                                startIcon={!loading && <Search />}
+                                sx={{ height: 40, borderRadius: 3, fontWeight: 600, textTransform: 'none', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' }}
+                            >
+                                {loading ? <CircularProgress size={24} color="inherit" /> : "Fetch Daily Data"}
+                            </Button>
+                        </Box>
+                    </Grid>
+                </Grid>
+            </MotionPaper>
+
+            <AnimatePresence>
+                {error && (
+                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                        <Alert severity="error" sx={{ mb: 3, borderRadius: 3 }}>{error}</Alert>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {loading && (
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 8 }}>
+                    <CircularProgress size={60} thickness={4} sx={{ color: '#10b981' }} />
+                </Box>
+            )}
+
+            {!loading && reportData && (
+                <motion.div initial="hidden" animate="visible" variants={containerVariants}>
+                    <Grid container spacing={2} sx={{ mb: 4 }}>
+                        <Grid item xs={12} sm={6} md={4}><StatCard title="Total Students" value={summary.total} color={theme.palette.primary.main} icon={<Class />} /></Grid>
+                        <Grid item xs={12} sm={6} md={4}><StatCard title="Attended explicitly Today" value={summary.attended} color={theme.palette.success.main} icon={<EventAvailable />} /></Grid>
+                        <Grid item xs={12} sm={6} md={4}><StatCard title="Pending Marking Today" value={summary.pending} color={theme.palette.warning.main} icon={<Edit />} /></Grid>
+                        <Grid item xs={12} sm={6} md={4}><StatCard title="Absent Today" value={summary.absent} color={theme.palette.error.main} icon={<EventBusy />} /></Grid>
+                        <Grid item xs={12} sm={6} md={4}><StatCard title="Paid Specially Today" value={summary.paidToday} color="#c8960c" icon={<CheckCircle />} /></Grid>
+                        <Grid item xs={12} sm={6} md={4}><StatCard title={isDaily ? "Left to Pay (Today)" : "Left to Pay (This Month)"} value={summary.unpaidMonth} color={theme.palette.error.light} icon={<Cancel />} /></Grid>
+                    </Grid>
+
+                    {/* Search & Filter Header */}
+                    <Box sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        flexWrap: 'wrap',
+                        gap: 2,
+                        mb: 2.5,
+                        px: 0.5
+                    }}>
+                        <Typography variant="h6" fontWeight={700} color="text.primary">
+                            Students List
+                            <Chip
+                                label={`${displayedData.length}${dailySearch ? ` of ${reportData.length}` : ''}`}
+                                size="small"
+                                color="success"
+                                sx={{ ml: 1.5, fontWeight: 'bold', borderRadius: 1.5 }}
+                            />
+                        </Typography>
+                        <TextField
+                            size="small"
+                            placeholder="Search today's students..."
+                            value={dailySearch}
+                            onChange={(e) => setDailySearch(e.target.value)}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <Search fontSize="small" sx={{ color: 'text.secondary' }} />
+                                    </InputAdornment>
+                                ),
+                                endAdornment: dailySearch ? (
+                                    <InputAdornment position="end">
+                                        <IconButton size="small" onClick={() => setDailySearch('')}>
+                                            <Close sx={{ fontSize: 16 }} />
+                                        </IconButton>
+                                    </InputAdornment>
+                                ) : null,
+                                sx: {
+                                    borderRadius: 2.5,
+                                    bgcolor: alpha(theme.palette.background.paper, 0.6),
+                                    fontSize: '15px',
+                                    '& input': { fontSize: '15px' }
+                                }
+                            }}
+                            sx={{ width: { xs: '100%', sm: 260 } }}
+                        />
+                    </Box>
+
+                    <TableContainer component={Paper} elevation={0} sx={{ borderRadius: 4, bgcolor: theme.palette.background.paper, border: `1px solid ${theme.palette.divider}`, overflowX: 'auto' }}>
+                        <Table sx={{ minWidth: 650 }}>
+                            <TableHead>
+                                <TableRow sx={{ background: alpha(theme.palette.primary.main, 0.05) }}>
+                                    <TableCell sx={{ fontWeight: 700 }}>Student Name</TableCell>
+                                    <TableCell sx={{ fontWeight: 700 }}>Index</TableCell>
+                                    <TableCell align="center" sx={{ fontWeight: 700 }}>{isDaily ? "Day Fee" : "Monthly Fee"}</TableCell>
+                                    <TableCell align="center" sx={{ fontWeight: 700 }}>Paid Today?</TableCell>
+                                    <TableCell align="center" sx={{ fontWeight: 700 }}>Today's Attendance</TableCell>
+                                    <TableCell align="center" sx={{ fontWeight: 700 }}>Tute Given</TableCell>
+                                    <TableCell align="center" sx={{ fontWeight: 700 }}>Quick Mark</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {displayedData.length === 0 ? (
+                                    <TableRow><TableCell colSpan={7} align="center" sx={{ py: 6 }}><Typography color="text.secondary">No matching students found</Typography></TableCell></TableRow>
+                                ) : (
+                                    displayedData.map((row) => (
+                                        <TableRow key={row.id} hover>
+                                            <TableCell>
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                                    <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main', fontSize: '14px' }}>{row.name.charAt(0)}</Avatar>
+                                                    <Typography fontWeight={600}>{row.name}</Typography>
+                                                </Box>
+                                            </TableCell>
+                                            <TableCell><Chip label={row.indexNumber} size="small" variant="outlined" /></TableCell>
+                                            <TableCell align="center">
+                                                {row.isFreeCard ? (
+                                                    <Chip label="Free Card" color="secondary" size="small" variant="filled" sx={{ fontWeight: 600, bgcolor: '#a855f7' }} />
+                                                ) : (
+                                                    <Chip label={row.feePaidStatus ? "Paid" : "Unpaid"} color={row.feePaidStatus ? "success" : "error"} size="small" variant="filled" sx={{ fontWeight: 600 }} />
+                                                )}
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                {row.paidToday ? <Chip label="Yes, Today!" color="secondary" size="small" /> : <Typography variant="caption" color="text.secondary">-</Typography>}
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                <Chip
+                                                    label={row.attendanceToday === true || row.attendanceToday === 'present' || row.attendanceToday === 'true' ? "Present" : (row.attendanceToday === 'absent' || row.attendanceToday === false || row.attendanceToday === 'false' ? "Absent" : "Pending")}
+                                                    color={row.attendanceToday === true || row.attendanceToday === 'present' || row.attendanceToday === 'true' ? "success" : (row.attendanceToday === 'absent' || row.attendanceToday === false || row.attendanceToday === 'false' ? "error" : "default")}
+                                                    size="small"
+                                                    variant={row.attendanceToday === 'pending' ? "outlined" : "filled"}
+                                                />
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                <Tooltip title={row.tutesGiven ? "Mark Pending" : "Mark Given"}>
+                                                     <IconButton
+                                                         size="small"
+                                                         color={row.tutesGiven ? "success" : "default"}
+                                                         onClick={() => handleToggleTute(row.id, row.tutesGiven)}
+                                                         sx={{ border: row.tutesGiven ? '1px solid rgba(16, 185, 129, 0.5)' : '1px solid rgba(0, 0, 0, 0.1)' }}
+                                                     >
+                                                         <Book fontSize="small" />
+                                                     </IconButton>
+                                                </Tooltip>
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
+                                                    <Tooltip title="Mark Present">
+                                                        <IconButton size="small" color="success" onClick={() => handleMarkAttendance(row.id, 'present')} sx={{ border: '1px solid rgba(16, 185, 129, 0.3)' }}>
+                                                            <CheckCircle fontSize="small" />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                    <Tooltip title="Mark Absent">
+                                                        <IconButton size="small" color="error" onClick={() => handleMarkAttendance(row.id, 'absent')} sx={{ border: '1px solid rgba(239, 68, 68, 0.3)' }}>
+                                                            <Cancel fontSize="small" />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                    {row.mobile && (
+                                                        <Tooltip title="WhatsApp Parent">
+                                                            <IconButton size="small" color="success" onClick={() => handleSendWhatsApp(row)} sx={{ border: '1px solid rgba(37, 211, 102, 0.3)' }}>
+                                                                <WhatsApp fontSize="small" />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    )}
+                                                </Box>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                )}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </motion.div>
+            )}
+        </MotionContainer>
+    );
+}
