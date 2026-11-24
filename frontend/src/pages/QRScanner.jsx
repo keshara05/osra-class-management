@@ -51,7 +51,7 @@ const playSuccessSound = () => {
         gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
         osc.start();
         osc.stop(ctx.currentTime + 0.2);
-    } catch (e) {}
+    } catch (e) { }
 };
 
 const playWarningSound = () => {
@@ -69,7 +69,7 @@ const playWarningSound = () => {
         gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
         osc.start();
         osc.stop(ctx.currentTime + 0.3);
-    } catch (e) {}
+    } catch (e) { }
 };
 
 const playErrorSound = () => {
@@ -87,7 +87,7 @@ const playErrorSound = () => {
         gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
         osc.start();
         osc.stop(ctx.currentTime + 0.3);
-    } catch (e) {}
+    } catch (e) { }
 };
 
 const speakText = (text) => {
@@ -98,7 +98,7 @@ const speakText = (text) => {
             msg.lang = 'en-US';
             msg.rate = 1.15;
             window.speechSynthesis.speak(msg);
-        } catch (e) {}
+        } catch (e) { }
     }
 };
 
@@ -373,7 +373,7 @@ export default function QRScanner() {
                     await processAttendance(decodedText);
                 };
 
-                const onScanFailure = () => {};
+                const onScanFailure = () => { };
 
                 try {
                     await scannerRef.current.start(
@@ -497,7 +497,7 @@ export default function QRScanner() {
                             width: 44,
                             height: 44,
                             borderRadius: '14px',
-                            bgcolor: 'rgba(212, 175, 55, 0.15)',
+                            bgcolor: 'rgba(99, 102, 241, 0.15)',
                             color: 'primary.main',
                             display: 'flex',
                             alignItems: 'center',

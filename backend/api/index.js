@@ -15,7 +15,8 @@ app.use(cors({
     preflightContinue: false,
     optionsSuccessStatus: 204
 }));
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // Root health check (MUST be before any DB connection calls)
 app.get('/', (req, res) => {

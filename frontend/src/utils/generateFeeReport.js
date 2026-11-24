@@ -35,7 +35,7 @@ export const generateFeeReport = (student, subjectMap, stats, t, lang) => {
 
     doc.setFontSize(10);
     doc.setTextColor(71, 85, 105);
-    
+
     // Left Column
     doc.setFont(lang === 'si' ? 'NotoSansSinhala' : 'helvetica', 'bold');
     doc.text(`${t('student_name')}:`, 20, 62);
@@ -104,8 +104,8 @@ export const generateFeeReport = (student, subjectMap, stats, t, lang) => {
         head: tableHeaders,
         body: tableData,
         theme: 'grid',
-        headStyles: { 
-            fillColor: [71, 85, 105], 
+        headStyles: {
+            fillColor: [71, 85, 105],
             textColor: 255,
             fontSize: 10,
             halign: 'center',
@@ -114,7 +114,7 @@ export const generateFeeReport = (student, subjectMap, stats, t, lang) => {
         bodyStyles: {
             font: lang === 'si' ? 'NotoSansSinhala' : 'helvetica'
         },
-        styles: { 
+        styles: {
             fontSize: 10,
             cellPadding: 7,
             lineColor: [226, 232, 240]
@@ -136,19 +136,19 @@ export const generateFeeReport = (student, subjectMap, stats, t, lang) => {
         doc.setTextColor(15, 23, 42);
         doc.setFont(lang === 'si' ? 'NotoSansSinhala' : 'helvetica', 'bold');
         doc.text(t('performance_analytics'), 14, currentY + 8);
-        
+
         currentY += 16;
-        
+
         stats.subjects.forEach(subj => {
             doc.setFontSize(11);
             doc.setTextColor(71, 85, 105);
             doc.setFont(lang === 'si' ? 'NotoSansSinhala' : 'helvetica', 'bold');
             doc.text(subj.name, 14, currentY);
-            
+
             // Draw track
             doc.setFillColor(241, 245, 249); // Empty gray bar
             doc.rect(70, currentY - 4, 110, 6, 'F');
-            
+
             // Draw progress
             const pct = subj.pct || 0;
             if (pct > 0) {
@@ -157,16 +157,16 @@ export const generateFeeReport = (student, subjectMap, stats, t, lang) => {
                 if (pct >= 75) doc.setFillColor(34, 197, 94); // Green
                 else if (pct >= 50) doc.setFillColor(234, 179, 8); // Yellow
                 else doc.setFillColor(239, 68, 68); // Red
-                
+
                 doc.rect(70, currentY - 4, fillWidth, 6, 'F');
             }
-            
+
             // Percentage Text
             doc.setFontSize(9);
             doc.setFont(lang === 'si' ? 'NotoSansSinhala' : 'helvetica', 'bold');
             doc.setTextColor(15, 23, 42);
             doc.text(`${pct}%`, 184, currentY + 1);
-            
+
             currentY += 14;
         });
     }
@@ -177,9 +177,9 @@ export const generateFeeReport = (student, subjectMap, stats, t, lang) => {
     doc.setTextColor(148, 163, 184);
     doc.setFont(lang === 'si' ? 'NotoSansSinhala' : 'helvetica', 'italic');
     doc.text(lang === 'si' ? "මෙය පරිගණකයෙන් සැකසූ වාර්තාවක් වන අතර අත්සනක් අවශ්‍ය නොවේ." : "This is a system-generated report and does not require a physical signature.", 105, currentY, { align: 'center' });
-    
+
     // Page bottom border/color accent
-    doc.setDrawColor(212, 175, 55); // Indigo accent line
+    doc.setDrawColor(99, 102, 241); // Indigo accent line
     doc.setLineWidth(1.5);
     doc.line(14, 280, 196, 280);
 

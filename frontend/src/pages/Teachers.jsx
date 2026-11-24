@@ -19,10 +19,10 @@ import { useNavigate } from 'react-router-dom';
 /* ─── Palettes ─── */
 const PALETTES = [
     { from: '#ff5c7c', to: '#ff3d6b' }, // Coral / Rose
-    { from: '#6c5fff', to: '#c8960c' }, // Indigo / Violet
+    { from: '#6c5fff', to: '#8b5cf6' }, // Indigo / Violet
     { from: '#00d4a0', to: '#14b8a6' }, // Emerald / Teal
     { from: '#ffb84d', to: '#f97316' }, // Amber / Orange
-    { from: '#00cfff', to: '#d4af37' }, // Cyan / Indigo
+    { from: '#00cfff', to: '#6366f1' }, // Cyan / Indigo
     { from: '#a855f7', to: '#ec4899' }, // Purple / Pink
 ];
 const getPal = (i) => PALETTES[i % PALETTES.length];
@@ -421,7 +421,7 @@ export default function Teachers() {
                         sx={{
                             borderRadius: '14px', textTransform: 'none', py: 1.5, px: 3,
                             fontWeight: 700, fontSize: '0.9rem',
-                            background: 'linear-gradient(135deg, #6c5fff 0%, #c8960c 100%)',
+                            background: 'linear-gradient(135deg, #6c5fff 0%, #8b5cf6 100%)',
                             boxShadow: '0 4px 20px rgba(108,95,255,0.3)',
                             '&:hover': { background: 'linear-gradient(135deg, #5b4feb 0%, #7c4bf2 100%)' }
                         }}
@@ -517,193 +517,193 @@ export default function Teachers() {
                             /* ── Roster Grid ── */
                             <Grid container spacing={3.5}>
                                 {filteredTeachers.map((teacher, i) => {
-                            const pal = getPal(i);
-                            const initials = (teacher.username || '??').slice(0, 2).toUpperCase();
-                            const copied = copiedStates[teacher._id];
+                                    const pal = getPal(i);
+                                    const initials = (teacher.username || '??').slice(0, 2).toUpperCase();
+                                    const copied = copiedStates[teacher._id];
 
-                            return (
-                                <Grid item xs={12} sm={6} md={4} key={teacher._id} sx={{ display: 'flex' }}>
-                                    <Card
-                                        component={motion.div}
-                                        whileHover={{ y: -8 }}
-                                        transition={{ duration: 0.3 }}
-                                        sx={{
-                                            width: '100%', borderRadius: '24px', display: 'flex', flexDirection: 'column',
-                                            bgcolor: isDark ? '#0c1022' : '#ffffff',
-                                            border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)'}`,
-                                            boxShadow: isDark ? '0 10px 30px rgba(0,0,0,0.3)' : '0 10px 25px rgba(0,0,0,0.05)',
-                                            position: 'relative', overflow: 'hidden'
-                                        }}
-                                    >
-                                        {/* Top Color Banner */}
-                                        <Box sx={{
-                                            height: 100, flexShrink: 0, position: 'relative',
-                                            background: `linear-gradient(135deg, ${pal.from} 0%, ${pal.to} 100%)`
-                                        }}>
-                                            {/* Subject Chip */}
-                                            <Chip
-                                                icon={<School sx={{ fontSize: '12px !important', color: '#fff !important' }} />}
-                                                label={teacher.assignedSubject || 'Unassigned'}
-                                                size="small"
+                                    return (
+                                        <Grid item xs={12} sm={6} md={4} key={teacher._id} sx={{ display: 'flex' }}>
+                                            <Card
+                                                component={motion.div}
+                                                whileHover={{ y: -8 }}
+                                                transition={{ duration: 0.3 }}
                                                 sx={{
-                                                    position: 'absolute', top: 12, right: 12,
-                                                    fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: '0.67rem',
-                                                    bgcolor: 'rgba(0,0,0,0.25)',
-                                                    color: '#fff', border: '1px solid rgba(255,255,255,0.28)', height: 24, maxWidth: '65%'
-                                                }}
-                                            />
-
-                                            {/* Image Share & Download actions */}
-                                            <Box sx={{ position: 'absolute', top: 10, left: 10, display: 'flex', gap: 0.8 }}>
-                                                <Tooltip title="Download Photo">
-                                                    <IconButton
-                                                        size="small"
-                                                        onClick={() => downloadProfileImage(teacher, i)}
-                                                        sx={{
-                                                            bgcolor: 'rgba(0,0,0,0.4)', color: '#fff', width: 30, height: 30,
-                                                            '&:hover': { bgcolor: 'rgba(0,0,0,0.6)' }
-                                                        }}
-                                                    >
-                                                        <FileDownload sx={{ fontSize: 15 }} />
-                                                    </IconButton>
-                                                </Tooltip>
-                                                <Tooltip title={copied ? 'Card Saved!' : 'Save Profile Card'}>
-                                                    <IconButton
-                                                        size="small"
-                                                        onClick={() => handleShareCard(teacher, i)}
-                                                        sx={{
-                                                            bgcolor: copied ? 'rgba(16,185,129,0.7)' : 'rgba(0,0,0,0.4)',
-                                                            color: '#fff', width: 30, height: 30, '&:hover': { bgcolor: '#6c5fff' }
-                                                        }}
-                                                    >
-                                                        {copied ? <CheckCircle sx={{ fontSize: 15 }} /> : <Share sx={{ fontSize: 15 }} />}
-                                                    </IconButton>
-                                                </Tooltip>
-                                            </Box>
-                                        </Box>
-
-                                        {/* Teacher Avatar */}
-                                        <Box sx={{ display: 'flex', justifyContent: 'center', mt: '-38px', mb: 1.5, position: 'relative', zIndex: 2 }}>
-                                            <Avatar
-                                                src={teacher.image}
-                                                sx={{
-                                                    width: 76, height: 76, border: '4px solid',
-                                                    borderColor: isDark ? '#121216' : '#fff',
-                                                    boxShadow: '0 6px 20px rgba(0,0,0,0.2)', bgcolor: pal.from,
-                                                    fontWeight: 700, fontSize: '1.4rem', color: '#fff'
+                                                    width: '100%', borderRadius: '24px', display: 'flex', flexDirection: 'column',
+                                                    bgcolor: isDark ? '#0c1022' : '#ffffff',
+                                                    border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)'}`,
+                                                    boxShadow: isDark ? '0 10px 30px rgba(0,0,0,0.3)' : '0 10px 25px rgba(0,0,0,0.05)',
+                                                    position: 'relative', overflow: 'hidden'
                                                 }}
                                             >
-                                                {!teacher.image && initials}
-                                            </Avatar>
-                                        </Box>
+                                                {/* Top Color Banner */}
+                                                <Box sx={{
+                                                    height: 100, flexShrink: 0, position: 'relative',
+                                                    background: `linear-gradient(135deg, ${pal.from} 0%, ${pal.to} 100%)`
+                                                }}>
+                                                    {/* Subject Chip */}
+                                                    <Chip
+                                                        icon={<School sx={{ fontSize: '12px !important', color: '#fff !important' }} />}
+                                                        label={teacher.assignedSubject || 'Unassigned'}
+                                                        size="small"
+                                                        sx={{
+                                                            position: 'absolute', top: 12, right: 12,
+                                                            fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: '0.67rem',
+                                                            bgcolor: 'rgba(0,0,0,0.25)',
+                                                            color: '#fff', border: '1px solid rgba(255,255,255,0.28)', height: 24, maxWidth: '65%'
+                                                        }}
+                                                    />
 
-                                        {/* Card Contents */}
-                                        <Box sx={{ px: 3, pb: 3, display: 'flex', flexDirection: 'column', flexGrow: 1, alignItems: 'center', textAlign: 'center' }}>
-                                            <Typography variant="h6" sx={{
-                                                fontFamily: "'Outfit', sans-serif", fontWeight: 800, fontSize: '1.1rem',
-                                                color: isDark ? '#fff' : '#111827', mb: 0.5, width: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
-                                            }}>
-                                                {teacher.username}
-                                            </Typography>
-                                            <Box sx={{ width: 32, height: 3, borderRadius: 2, mb: 2, background: `linear-gradient(90deg, ${pal.from}, ${pal.to})` }} />
+                                                    {/* Image Share & Download actions */}
+                                                    <Box sx={{ position: 'absolute', top: 10, left: 10, display: 'flex', gap: 0.8 }}>
+                                                        <Tooltip title="Download Photo">
+                                                            <IconButton
+                                                                size="small"
+                                                                onClick={() => downloadProfileImage(teacher, i)}
+                                                                sx={{
+                                                                    bgcolor: 'rgba(0,0,0,0.4)', color: '#fff', width: 30, height: 30,
+                                                                    '&:hover': { bgcolor: 'rgba(0,0,0,0.6)' }
+                                                                }}
+                                                            >
+                                                                <FileDownload sx={{ fontSize: 15 }} />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                        <Tooltip title={copied ? 'Card Saved!' : 'Save Profile Card'}>
+                                                            <IconButton
+                                                                size="small"
+                                                                onClick={() => handleShareCard(teacher, i)}
+                                                                sx={{
+                                                                    bgcolor: copied ? 'rgba(16,185,129,0.7)' : 'rgba(0,0,0,0.4)',
+                                                                    color: '#fff', width: 30, height: 30, '&:hover': { bgcolor: '#6c5fff' }
+                                                                }}
+                                                            >
+                                                                {copied ? <CheckCircle sx={{ fontSize: 15 }} /> : <Share sx={{ fontSize: 15 }} />}
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    </Box>
+                                                </Box>
 
-                                            <Typography variant="body2" color="text.secondary" sx={{
-                                                fontSize: '0.8rem', lineHeight: 1.6, minHeight: '4.8em', display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 3, overflow: 'hidden', mb: 2
-                                            }}>
-                                                {teacher.description || `Expert instructor assigned to ${teacher.assignedSubject || 'academic courses'}. Dedicated to boosting student performance.`}
-                                            </Typography>
+                                                {/* Teacher Avatar */}
+                                                <Box sx={{ display: 'flex', justifyContent: 'center', mt: '-38px', mb: 1.5, position: 'relative', zIndex: 2 }}>
+                                                    <Avatar
+                                                        src={teacher.image}
+                                                        sx={{
+                                                            width: 76, height: 76, border: '4px solid',
+                                                            borderColor: isDark ? '#121216' : '#fff',
+                                                            boxShadow: '0 6px 20px rgba(0,0,0,0.2)', bgcolor: pal.from,
+                                                            fontWeight: 700, fontSize: '1.4rem', color: '#fff'
+                                                        }}
+                                                    >
+                                                        {!teacher.image && initials}
+                                                    </Avatar>
+                                                </Box>
 
-                                            {/* Teacher Credentials Box */}
-                                            <Box sx={{
-                                                width: '100%',
-                                                p: 1.5,
-                                                borderRadius: '14px',
-                                                bgcolor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)',
-                                                border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
-                                                textAlign: 'left',
-                                                mb: 1
-                                            }}>
-                                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.8 }}>
-                                                    <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                                        <Lock sx={{ fontSize: 13 }} /> Username:
-                                                    </Typography>
-                                                    <Typography variant="caption" fontWeight={700} sx={{ color: 'text.primary', fontFamily: 'monospace' }}>
+                                                {/* Card Contents */}
+                                                <Box sx={{ px: 3, pb: 3, display: 'flex', flexDirection: 'column', flexGrow: 1, alignItems: 'center', textAlign: 'center' }}>
+                                                    <Typography variant="h6" sx={{
+                                                        fontFamily: "'Outfit', sans-serif", fontWeight: 800, fontSize: '1.1rem',
+                                                        color: isDark ? '#fff' : '#111827', mb: 0.5, width: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
+                                                    }}>
                                                         {teacher.username}
                                                     </Typography>
-                                                </Box>
-                                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                                    <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                                        <VpnKey sx={{ fontSize: 13 }} /> Password:
+                                                    <Box sx={{ width: 32, height: 3, borderRadius: 2, mb: 2, background: `linear-gradient(90deg, ${pal.from}, ${pal.to})` }} />
+
+                                                    <Typography variant="body2" color="text.secondary" sx={{
+                                                        fontSize: '0.8rem', lineHeight: 1.6, minHeight: '4.8em', display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 3, overflow: 'hidden', mb: 2
+                                                    }}>
+                                                        {teacher.description || `Expert instructor assigned to ${teacher.assignedSubject || 'academic courses'}. Dedicated to boosting student performance.`}
                                                     </Typography>
-                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                                        <Typography variant="caption" fontWeight={700} sx={{ color: '#10b981', fontFamily: 'monospace', fontSize: '12px' }}>
-                                                            {showPasswordStates[teacher._id] ? (teacher.plainPassword || 'password') : '••••••••'}
-                                                        </Typography>
-                                                        <IconButton
-                                                            size="small"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                toggleShowPassword(teacher._id);
+
+                                                    {/* Teacher Credentials Box */}
+                                                    <Box sx={{
+                                                        width: '100%',
+                                                        p: 1.5,
+                                                        borderRadius: '14px',
+                                                        bgcolor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)',
+                                                        border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
+                                                        textAlign: 'left',
+                                                        mb: 1
+                                                    }}>
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.8 }}>
+                                                            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                                                <Lock sx={{ fontSize: 13 }} /> Username:
+                                                            </Typography>
+                                                            <Typography variant="caption" fontWeight={700} sx={{ color: 'text.primary', fontFamily: 'monospace' }}>
+                                                                {teacher.username}
+                                                            </Typography>
+                                                        </Box>
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                                            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                                                <VpnKey sx={{ fontSize: 13 }} /> Password:
+                                                            </Typography>
+                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                                                <Typography variant="caption" fontWeight={700} sx={{ color: '#10b981', fontFamily: 'monospace', fontSize: '12px' }}>
+                                                                    {showPasswordStates[teacher._id] ? (teacher.plainPassword || 'password') : '••••••••'}
+                                                                </Typography>
+                                                                <IconButton
+                                                                    size="small"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        toggleShowPassword(teacher._id);
+                                                                    }}
+                                                                    sx={{ p: 0.2 }}
+                                                                    title={showPasswordStates[teacher._id] ? "Hide password" : "Show password"}
+                                                                >
+                                                                    {showPasswordStates[teacher._id] ? <VisibilityOff sx={{ fontSize: 14 }} /> : <Visibility sx={{ fontSize: 14 }} />}
+                                                                </IconButton>
+                                                                <IconButton
+                                                                    size="small"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        copyPassword(teacher._id, teacher.plainPassword || 'password');
+                                                                    }}
+                                                                    sx={{ p: 0.2 }}
+                                                                    title="Copy password"
+                                                                >
+                                                                    {copiedPassId === teacher._id ? <CheckCircle sx={{ fontSize: 14, color: '#10b981' }} /> : <ContentCopy sx={{ fontSize: 14 }} />}
+                                                                </IconButton>
+                                                            </Box>
+                                                        </Box>
+                                                    </Box>
+
+                                                    <Box sx={{ flexGrow: 1 }} />
+
+                                                    {/* Action Buttons */}
+                                                    <Box sx={{ display: 'flex', gap: 1, width: '100%', mt: 2 }}>
+                                                        <Button
+                                                            variant="contained"
+                                                            onClick={() => { setSelectedTeacherForPayment(teacher); setPaymentOpen(true); }}
+                                                            sx={{
+                                                                flex: 2, borderRadius: '12px', textTransform: 'none', py: 1.1,
+                                                                fontWeight: 700, fontSize: '0.82rem', bgcolor: '#00d4a0', color: '#fff',
+                                                                boxShadow: 'none', '&:hover': { bgcolor: '#05b88a' }
                                                             }}
-                                                            sx={{ p: 0.2 }}
-                                                            title={showPasswordStates[teacher._id] ? "Hide password" : "Show password"}
                                                         >
-                                                            {showPasswordStates[teacher._id] ? <VisibilityOff sx={{ fontSize: 14 }} /> : <Visibility sx={{ fontSize: 14 }} />}
+                                                            Payment
+                                                        </Button>
+                                                        <IconButton
+                                                            onClick={() => handleOpenEdit(teacher)}
+                                                            sx={{
+                                                                borderRadius: '12px', border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
+                                                                color: 'text.secondary', p: 1.2
+                                                            }}
+                                                        >
+                                                            <Edit sx={{ fontSize: 18 }} />
                                                         </IconButton>
                                                         <IconButton
-                                                            size="small"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                copyPassword(teacher._id, teacher.plainPassword || 'password');
+                                                            onClick={() => handleDeleteTeacher(teacher._id, teacher.username)}
+                                                            sx={{
+                                                                borderRadius: '12px', border: `1px solid ${alpha(theme.palette.error.main, 0.25)}`,
+                                                                color: 'error.main', p: 1.2
                                                             }}
-                                                            sx={{ p: 0.2 }}
-                                                            title="Copy password"
                                                         >
-                                                            {copiedPassId === teacher._id ? <CheckCircle sx={{ fontSize: 14, color: '#10b981' }} /> : <ContentCopy sx={{ fontSize: 14 }} />}
+                                                            <Delete sx={{ fontSize: 18 }} />
                                                         </IconButton>
                                                     </Box>
                                                 </Box>
-                                            </Box>
-
-                                            <Box sx={{ flexGrow: 1 }} />
-
-                                            {/* Action Buttons */}
-                                            <Box sx={{ display: 'flex', gap: 1, width: '100%', mt: 2 }}>
-                                                <Button
-                                                    variant="contained"
-                                                    onClick={() => { setSelectedTeacherForPayment(teacher); setPaymentOpen(true); }}
-                                                    sx={{
-                                                        flex: 2, borderRadius: '12px', textTransform: 'none', py: 1.1,
-                                                        fontWeight: 700, fontSize: '0.82rem', bgcolor: '#00d4a0', color: '#fff',
-                                                        boxShadow: 'none', '&:hover': { bgcolor: '#05b88a' }
-                                                    }}
-                                                >
-                                                    Payment
-                                                </Button>
-                                                <IconButton
-                                                    onClick={() => handleOpenEdit(teacher)}
-                                                    sx={{
-                                                        borderRadius: '12px', border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
-                                                        color: 'text.secondary', p: 1.2
-                                                    }}
-                                                >
-                                                    <Edit sx={{ fontSize: 18 }} />
-                                                </IconButton>
-                                                <IconButton
-                                                    onClick={() => handleDeleteTeacher(teacher._id, teacher.username)}
-                                                    sx={{
-                                                        borderRadius: '12px', border: `1px solid ${alpha(theme.palette.error.main, 0.25)}`,
-                                                        color: 'error.main', p: 1.2
-                                                    }}
-                                                >
-                                                    <Delete sx={{ fontSize: 18 }} />
-                                                </IconButton>
-                                            </Box>
-                                        </Box>
-                                    </Card>
-                                </Grid>
-                            );
-                        })}
+                                            </Card>
+                                        </Grid>
+                                    );
+                                })}
                             </Grid>
                         )}
                     </>
@@ -831,7 +831,7 @@ export default function Teachers() {
                             variant="contained"
                             sx={{
                                 borderRadius: 3, textTransform: 'none', px: 4, py: 1.1,
-                                background: 'linear-gradient(135deg, #6c5fff 0%, #c8960c 100%)',
+                                background: 'linear-gradient(135deg, #6c5fff 0%, #8b5cf6 100%)',
                                 fontWeight: 700, boxShadow: '0 4px 14px rgba(108,95,255,0.3)',
                                 '&:hover': { background: 'linear-gradient(135deg, #5b4feb 0%, #7c4bf2 100%)' }
                             }}
