@@ -19,7 +19,7 @@ const ClassCard = ({ student }) => {
       boxSizing: 'border-box'
     }}>
       {/* Decorative accent line on top */}
-      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '8px', background: 'linear-gradient(90deg, #6366f1, #22d3ee)' }}></div>
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '8px', background: 'linear-gradient(90deg, #d4af37, #0f172a)' }}></div>
 
       {/* Left Section - Details */}
       <div style={{ flex: 1, padding: '50px', display: 'flex', flexDirection: 'column' }}>
@@ -114,12 +114,12 @@ const ClassCard = ({ student }) => {
         boxSizing: 'border-box'
       }}>
         <div style={{
-          background: 'rgba(99,102,241,0.08)',
+          background: 'rgba(212,175,55,0.12)',
           padding: '12px 24px',
           borderRadius: '100px',
           marginBottom: '40px'
         }}>
-          <span style={{ fontSize: '15px', fontWeight: 800, letterSpacing: '2px', color: '#4f46e5' }}>STUDENT ID</span>
+          <span style={{ fontSize: '15px', fontWeight: 800, letterSpacing: '2px', color: '#aa820a' }}>STUDENT ID</span>
         </div>
 
         <div style={{

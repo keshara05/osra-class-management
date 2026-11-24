@@ -186,8 +186,8 @@ export default function AdminSettingsDialog({ open, onClose }) {
                         border: isDark ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid rgba(212, 175, 55, 0.2)',
                         borderRadius: 22,
                         boxShadow: isDark
-                            ? '0 25px 60px -15px rgba(0,0,0,0.8), 0 0 35px rgba(99,102,241,0.15)'
-                            : '0 25px 50px -12px rgba(99,102,241,0.18)',
+                            ? '0 25px 60px -15px rgba(0,0,0,0.8), 0 0 35px rgba(212,175,55,0.16)'
+                            : '0 25px 50px -12px rgba(212,175,55,0.2)',
                         padding: '28px 30px',
                         color: isDark ? '#f8fafc' : '#0f172a',
                         overflow: 'hidden',

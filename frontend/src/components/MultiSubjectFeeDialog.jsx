@@ -278,7 +278,7 @@ export default function MultiSubjectFeeDialog({
                     WebkitBackdropFilter: 'blur(28px)',
                     color: isDark ? '#f8fafc' : '#0f172a',
                     border: `1px solid ${isDark ? 'rgba(255,255,255,0.12)' : 'rgba(15,23,42,0.08)'}`,
-                    boxShadow: isDark ? '0 30px 80px rgba(0,0,0,0.7)' : '0 25px 60px rgba(99,102,241,0.15)',
+                    boxShadow: isDark ? '0 30px 80px rgba(0,0,0,0.7)' : '0 25px 60px rgba(212,175,55,0.16)',
                     overflow: 'hidden'
                 }
             }}
@@ -286,7 +286,7 @@ export default function MultiSubjectFeeDialog({
             {/* Header */}
             <DialogTitle sx={{
                 p: 2.5, pb: 1.5,
-                background: isDark ? 'linear-gradient(180deg, rgba(99,102,241,0.12) 0%, transparent 100%)' : 'linear-gradient(180deg, rgba(99,102,241,0.06) 0%, transparent 100%)',
+                background: isDark ? 'linear-gradient(180deg, rgba(212,175,55,0.12) 0%, transparent 100%)' : 'linear-gradient(180deg, rgba(212,175,55,0.08) 0%, transparent 100%)',
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between'
             }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
@@ -444,8 +444,8 @@ export default function MultiSubjectFeeDialog({
                                                 opacity: allNotEnrolled ? (isSelected ? 0.9 : 0.45) : 1,
                                                 borderStyle: allNotEnrolled && !isSelected ? 'dashed' : 'solid',
                                                 background: isSelected ? 'linear-gradient(135deg, #d4af37 0%, #aa820a 100%)' : 'transparent',
-                                                borderColor: isSelected ? 'transparent' : isCurrent ? 'rgba(99,102,241,0.4)' : isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
-                                                color: isSelected ? 'white' : isCurrent ? '#d4af37' : 'inherit'
+                                                borderColor: isSelected ? 'transparent' : isCurrent ? 'rgba(212,175,55,0.45)' : isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+                                                color: isSelected ? '#060a14' : isCurrent ? '#d4af37' : 'inherit'
                                             }}
                                         >
                                             {mName.slice(0, 3)}

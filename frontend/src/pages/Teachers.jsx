@@ -18,12 +18,12 @@ import { useNavigate } from 'react-router-dom';
 
 /* ─── Palettes ─── */
 const PALETTES = [
-    { from: '#ff5c7c', to: '#ff3d6b' }, // Coral / Rose
-    { from: '#6c5fff', to: '#8b5cf6' }, // Indigo / Violet
-    { from: '#00d4a0', to: '#14b8a6' }, // Emerald / Teal
-    { from: '#ffb84d', to: '#f97316' }, // Amber / Orange
-    { from: '#00cfff', to: '#6366f1' }, // Cyan / Indigo
-    { from: '#a855f7', to: '#ec4899' }, // Purple / Pink
+    { from: '#d4af37', to: '#aa820a' }, // Osra 24K Gold
+    { from: '#38bdf8', to: '#0284c7' }, // Sapphire Blue
+    { from: '#10b981', to: '#059669' }, // Emerald / Teal
+    { from: '#fbbf24', to: '#d97706' }, // Amber / Gold
+    { from: '#f43f5e', to: '#e11d48' }, // Rose / Crimson
+    { from: '#22d3ee', to: '#0891b2' }, // Cyan / Azure
 ];
 const getPal = (i) => PALETTES[i % PALETTES.length];
 
@@ -366,11 +366,11 @@ export default function Teachers() {
     };
 
     return (
-        <Container maxWidth="xl" sx={{ py: 4, position: 'relative' }}>
+        <Container maxWidth="xl" sx={{ py: { xs: 2, md: 4 }, px: { xs: 1.5, sm: 3 }, position: 'relative' }}>
             {/* Ambient glows */}
             <Box sx={{
                 position: 'fixed', top: '15%', left: '5%', width: 500, height: 500,
-                borderRadius: '50%', background: 'radial-gradient(circle, rgba(108,95,255,0.08) 0%, transparent 70%)',
+                borderRadius: '50%', background: 'radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 70%)',
                 pointerEvents: 'none', zIndex: 0
             }} />
             <Box sx={{
@@ -401,7 +401,7 @@ export default function Teachers() {
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                 <Typography variant="h4" fontWeight={900} letterSpacing="-1px" sx={{
                                     fontFamily: "'Outfit', 'DM Sans', sans-serif",
-                                    background: isDark ? 'linear-gradient(135deg, #fff 40%, #00cfff 100%)' : 'linear-gradient(135deg, #111827 40%, #6c5fff 100%)',
+                                    background: isDark ? 'linear-gradient(135deg, #fff 40%, #d4af37 100%)' : 'linear-gradient(135deg, #0f172a 40%, #b8860b 100%)',
                                     WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'
                                 }}>
                                     Teachers Faculty
@@ -420,10 +420,10 @@ export default function Teachers() {
                         startIcon={<AddCircleOutline />}
                         sx={{
                             borderRadius: '14px', textTransform: 'none', py: 1.5, px: 3,
-                            fontWeight: 700, fontSize: '0.9rem',
-                            background: 'linear-gradient(135deg, #6c5fff 0%, #8b5cf6 100%)',
-                            boxShadow: '0 4px 20px rgba(108,95,255,0.3)',
-                            '&:hover': { background: 'linear-gradient(135deg, #5b4feb 0%, #7c4bf2 100%)' }
+                            fontWeight: 800, fontSize: '0.9rem', color: '#060a14',
+                            background: 'linear-gradient(135deg, #f5d77f 0%, #d4af37 55%, #aa820a 100%)',
+                            boxShadow: '0 4px 20px rgba(212,175,55,0.35)',
+                            '&:hover': { background: 'linear-gradient(135deg, #fff2be 0%, #f3cf7a 55%, #d4af37 100%)' }
                         }}
                     >
                         Add New Teacher
@@ -433,7 +433,7 @@ export default function Teachers() {
                 {/* ── Main Loading/Error states ── */}
                 {loading ? (
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 15, gap: 2 }}>
-                        <CircularProgress thickness={4} size={50} sx={{ color: '#6c5fff' }} />
+                        <CircularProgress thickness={4} size={50} sx={{ color: '#d4af37' }} />
                         <Typography color="text.secondary" variant="body2">Loading teachers roster...</Typography>
                     </Box>
                 ) : error ? (
@@ -573,7 +573,7 @@ export default function Teachers() {
                                                                 onClick={() => handleShareCard(teacher, i)}
                                                                 sx={{
                                                                     bgcolor: copied ? 'rgba(16,185,129,0.7)' : 'rgba(0,0,0,0.4)',
-                                                                    color: '#fff', width: 30, height: 30, '&:hover': { bgcolor: '#6c5fff' }
+                                                                    color: '#fff', width: 30, height: 30, '&:hover': { bgcolor: '#d4af37', color: '#060a14' }
                                                                 }}
                                                             >
                                                                 {copied ? <CheckCircle sx={{ fontSize: 15 }} /> : <Share sx={{ fontSize: 15 }} />}
@@ -830,10 +830,10 @@ export default function Teachers() {
                             type="submit"
                             variant="contained"
                             sx={{
-                                borderRadius: 3, textTransform: 'none', px: 4, py: 1.1,
-                                background: 'linear-gradient(135deg, #6c5fff 0%, #8b5cf6 100%)',
-                                fontWeight: 700, boxShadow: '0 4px 14px rgba(108,95,255,0.3)',
-                                '&:hover': { background: 'linear-gradient(135deg, #5b4feb 0%, #7c4bf2 100%)' }
+                                borderRadius: 3, textTransform: 'none', px: 4, py: 1.1, color: '#060a14',
+                                background: 'linear-gradient(135deg, #f5d77f 0%, #d4af37 55%, #aa820a 100%)',
+                                fontWeight: 800, boxShadow: '0 4px 14px rgba(212,175,55,0.35)',
+                                '&:hover': { background: 'linear-gradient(135deg, #fff2be 0%, #f3cf7a 55%, #d4af37 100%)' }
                             }}
                         >
                             {editorMode === 'create' ? 'Create Teacher' : 'Save Changes'}

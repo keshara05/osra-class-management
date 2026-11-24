@@ -91,8 +91,8 @@ export default function QuickAttendanceDialog({
         rowHoverBg: isDark ? 'rgba(255, 255, 255, 0.06)' : '#f1f5f9',
         chipUnselectedBg: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(15, 23, 42, 0.05)',
         indexBoxBg: isDark
-            ? 'linear-gradient(135deg, rgba(99,102,241,0.12) 0%, rgba(245,158,11,0.06) 100%)'
-            : 'linear-gradient(135deg, rgba(99,102,241,0.07) 0%, rgba(245,158,11,0.05) 100%)',
+            ? 'linear-gradient(135deg, rgba(212,175,55,0.14) 0%, rgba(245,158,11,0.06) 100%)'
+            : 'linear-gradient(135deg, rgba(212,175,55,0.09) 0%, rgba(245,158,11,0.05) 100%)',
         indexBoxBorder: isDark ? 'rgba(212, 175, 55, 0.25)' : 'rgba(212, 175, 55, 0.2)'
     }), [isDark]);
 
@@ -558,7 +558,7 @@ export default function QuickAttendanceDialog({
                                                     height: 36,
                                                     fontSize: 14,
                                                     fontWeight: 800,
-                                                    bgcolor: isDark ? 'rgba(99,102,241,0.25)' : 'rgba(99,102,241,0.12)',
+                                                    bgcolor: isDark ? 'rgba(212,175,55,0.22)' : 'rgba(212,175,55,0.14)',
                                                     color: 'primary.main'
                                                 }}
                                             >

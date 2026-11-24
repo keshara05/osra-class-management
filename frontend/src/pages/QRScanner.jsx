@@ -497,7 +497,7 @@ export default function QRScanner() {
                             width: 44,
                             height: 44,
                             borderRadius: '14px',
-                            bgcolor: 'rgba(99, 102, 241, 0.15)',
+                            bgcolor: 'rgba(212, 175, 55, 0.15)',
                             color: 'primary.main',
                             display: 'flex',
                             alignItems: 'center',
@@ -580,7 +580,7 @@ export default function QRScanner() {
                     sx={{
                         p: 2.2,
                         borderRadius: '16px',
-                        background: 'linear-gradient(135deg, rgba(245,158,11,0.08) 0%, rgba(99,102,241,0.05) 100%)',
+                        background: 'linear-gradient(135deg, rgba(212,175,55,0.09) 0%, rgba(56,189,248,0.05) 100%)',
                         border: '1px solid rgba(245,158,11,0.25)',
                         mb: 3.5
                     }}

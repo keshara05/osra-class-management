@@ -49,6 +49,7 @@ export default function EditSubjectDialog({
   onClose,
   subject, // null if creating a new subject
   defaultGrade,
+  allSubjects = [],
   onSaved,
   onDeleted
 }) {
@@ -100,8 +101,6 @@ export default function EditSubjectDialog({
               day: s.day || 'Monday'
             }))
           );
-        } else if (defaultGrade) {
-          setSelectedGrades([{ grade: defaultGrade, day: 'Monday' }]);
         } else {
           setSelectedGrades([]);
         }
@@ -217,11 +216,64 @@ export default function EditSubjectDialog({
     }
   };
 
+  const handleAssignExistingSubject = async (existingSub) => {
+    if (!existingSub || !existingSub.name || !defaultGrade) return;
+    setSaving(true);
+    setError(null);
+    try {
+      const currentSchedules = Array.isArray(existingSub.gradeSchedules) ? existingSub.gradeSchedules : [];
+      const alreadyHas = currentSchedules.some(g => g.grade?.toLowerCase() === defaultGrade.toLowerCase());
+      const updatedSchedules = alreadyHas
+        ? currentSchedules
+        : [...currentSchedules, { grade: defaultGrade, day: 'Monday' }];
+
+      await axios.put(
+        `${API_BASE_URL}/api/subjects/${encodeURIComponent(existingSub.name)}`,
+        { gradeSchedules: updatedSchedules }
+      );
+      if (onSaved) onSaved();
+      onClose();
+    } catch (err) {
+      console.error('Error assigning existing subject:', err);
+      setError(err.response?.data?.message || 'Failed to assign subject to grade.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleRemoveFromGrade = async () => {
+    if (!subject || !subject.name || !defaultGrade) return;
+
+    const confirmed = window.confirm(
+      `Remove "${subject.name}" from "${defaultGrade}" only?\n\nThis will NOT delete the subject from other grades or unassign the teacher.`
+    );
+    if (!confirmed) return;
+
+    setSaving(true);
+    setError(null);
+    try {
+      const remainingGrades = selectedGrades.filter(g => g.grade?.toLowerCase() !== defaultGrade.toLowerCase());
+      await axios.put(
+        `${API_BASE_URL}/api/subjects/${encodeURIComponent(subject.name)}`,
+        {
+          gradeSchedules: remainingGrades
+        }
+      );
+      if (onSaved) onSaved();
+      onClose();
+    } catch (err) {
+      console.error('Error removing from grade:', err);
+      setError(err.response?.data?.message || 'Failed to remove from grade.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handleDelete = async () => {
     if (!subject || !subject.name) return;
 
     const confirmed = window.confirm(
-      `Are you sure you want to permanently delete "${subject.name}"?\n\nThis will remove student enrollments and unassign any linked teacher.`
+      `Are you sure you want to PERMANENTLY delete "${subject.name}" from ALL grades?\n\nThis will remove it completely from the institute and unassign any linked teacher.`
     );
     if (!confirmed) return;
 
@@ -273,7 +325,7 @@ export default function EditSubjectDialog({
               width: 38,
               height: 38,
               borderRadius: '12px',
-              bgcolor: formData.color ? `${formData.color}22` : 'rgba(99,102,241,0.15)',
+              bgcolor: formData.color ? `${formData.color}22` : 'rgba(212,175,55,0.15)',
               border: `1.5px solid ${formData.color || '#d4af37'}`,
               display: 'flex',
               alignItems: 'center',
@@ -328,6 +380,57 @@ export default function EditSubjectDialog({
             ⚠️ {error}
           </Box>
         )}
+
+        {/* ── Quick Assign Existing Subject (when inside a Grade card) ── */}
+        {!isEditing && defaultGrade && (() => {
+          const assignable = (allSubjects || []).filter(s => {
+            const sched = s.gradeSchedules || [];
+            return !sched.some(g => g.grade?.toLowerCase() === defaultGrade.toLowerCase());
+          });
+          if (assignable.length === 0) return null;
+          return (
+            <Box sx={{
+              p: 1.8,
+              borderRadius: 2.5,
+              bgcolor: 'rgba(212, 175, 55, 0.06)',
+              border: '1px solid rgba(212, 175, 55, 0.25)'
+            }}>
+              <Typography variant="caption" sx={{ color: '#d4af37', fontWeight: 800, display: 'block', mb: 0.5, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Assign Existing Subject / Teacher to {defaultGrade}
+              </Typography>
+              <Typography variant="caption" sx={{ color: 'var(--text3, #94a3b8)', display: 'block', mb: 1.2 }}>
+                Click any existing subject below to assign it only to {defaultGrade}, or create a new one below:
+              </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                {assignable.map(sub => {
+                  const linkedTeacher = teachers.find(t => t.assignedSubject === sub.name);
+                  return (
+                    <Chip
+                      key={sub._id || sub.name}
+                      clickable
+                      disabled={saving}
+                      onClick={() => handleAssignExistingSubject(sub)}
+                      label={linkedTeacher ? `+ ${sub.name} (${linkedTeacher.username})` : `+ ${sub.name}`}
+                      sx={{
+                        fontWeight: 700,
+                        fontSize: '0.78rem',
+                        bgcolor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(15,23,42,0.06)',
+                        color: 'inherit',
+                        border: '1px solid rgba(212, 175, 55, 0.35)',
+                        transition: 'all 0.16s ease',
+                        '&:hover': {
+                          bgcolor: '#d4af37',
+                          color: '#060a14',
+                          transform: 'translateY(-1px)'
+                        }
+                      }}
+                    />
+                  );
+                })}
+              </Box>
+            </Box>
+          );
+        })()}
 
         {/* ── Subject Name ── */}
         <TextField
@@ -477,10 +580,10 @@ export default function EditSubjectDialog({
                   clickable
                   onClick={() => handleToggleGrade(grade)}
                   sx={{
-                    fontWeight: isSelected ? 700 : 500,
+                    fontWeight: isSelected ? 800 : 500,
                     fontSize: '0.8rem',
                     bgcolor: isSelected ? 'var(--accent, #d4af37)' : 'rgba(255,255,255,0.05)',
-                    color: isSelected ? '#fff' : 'var(--text2, #94a3b8)',
+                    color: isSelected ? '#060a14' : 'var(--text2, #94a3b8)',
                     border: isSelected ? '1px solid var(--accent, #d4af37)' : '1px solid var(--border2, rgba(255,255,255,0.1))',
                     transition: 'all 0.15s ease',
                     '&:hover': {
@@ -552,21 +655,41 @@ export default function EditSubjectDialog({
         }}
       >
         {isEditing ? (
-          <Button
-            onClick={handleDelete}
-            disabled={saving || deleting}
-            color="error"
-            size="small"
-            sx={{
-              fontWeight: 700,
-              textTransform: 'none',
-              px: 1.5,
-              color: '#f43f5e',
-              '&:hover': { bgcolor: 'rgba(244, 63, 94, 0.12)' }
-            }}
-          >
-            {deleting ? 'Deleting...' : 'Delete Subject'}
-          </Button>
+          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+            {defaultGrade && (
+              <Button
+                onClick={handleRemoveFromGrade}
+                disabled={saving || deleting}
+                size="small"
+                sx={{
+                  fontWeight: 700,
+                  textTransform: 'none',
+                  px: 1.5,
+                  color: '#fbbf24',
+                  bgcolor: 'rgba(251, 191, 36, 0.1)',
+                  border: '1px solid rgba(251, 191, 36, 0.25)',
+                  '&:hover': { bgcolor: 'rgba(251, 191, 36, 0.18)' }
+                }}
+              >
+                Remove from {defaultGrade}
+              </Button>
+            )}
+            <Button
+              onClick={handleDelete}
+              disabled={saving || deleting}
+              color="error"
+              size="small"
+              sx={{
+                fontWeight: 700,
+                textTransform: 'none',
+                px: 1.5,
+                color: '#f43f5e',
+                '&:hover': { bgcolor: 'rgba(244, 63, 94, 0.12)' }
+              }}
+            >
+              {deleting ? 'Deleting...' : 'Delete Subject (All)'}
+            </Button>
+          </Box>
         ) : (
           <div />
         )}
@@ -591,18 +714,18 @@ export default function EditSubjectDialog({
             onClick={handleSave}
             disabled={saving || deleting}
             sx={{
-              bgcolor: 'var(--accent, #d4af37)',
-              color: '#fff',
-              fontWeight: 700,
+              background: 'linear-gradient(135deg, #f5d77f 0%, #d4af37 50%, #aa820a 100%)',
+              color: '#060a14',
+              fontWeight: 800,
               textTransform: 'none',
               borderRadius: 2,
               px: 2.5,
-              boxShadow: '0 4px 15px rgba(99,102,241,0.4)',
-              '&:hover': { bgcolor: '#aa820a' }
+              boxShadow: '0 4px 15px rgba(212,175,55,0.4)',
+              '&:hover': { background: 'linear-gradient(135deg, #fff2be 0%, #f3cf7a 50%, #d4af37 100%)' }
             }}
           >
             {saving ? (
-              <CircularProgress size={18} sx={{ color: '#fff', mr: 1 }} />
+              <CircularProgress size={18} sx={{ color: '#060a14', mr: 1 }} />
             ) : null}
             {isEditing ? 'Save Changes' : 'Create Subject'}
           </Button>

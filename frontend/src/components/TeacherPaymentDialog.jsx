@@ -365,8 +365,8 @@ Osra Institute Management`;
                                 startIcon={<PictureAsPdf />}
                                 size="small"
                                 sx={{
-                                    color: '#818cf8',
-                                    borderColor: 'rgba(99,102,241,0.3)',
+                                    color: '#d4af37',
+                                    borderColor: 'rgba(212,175,55,0.35)',
                                     textTransform: 'none'
                                 }}
                             >

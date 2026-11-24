@@ -311,7 +311,7 @@ function TeacherCard({ teacher, index, onPayment }) {
                                     bgcolor: copied ? 'rgba(16,185,129,0.7)' : 'rgba(0,0,0,0.5)',
                                     color:'#fff', width:30, height:30,
                                     transition:'background 0.2s',
-                                    '&:hover':{ bgcolor:'rgba(99,102,241,0.75)' },
+                                    '&:hover':{ bgcolor:'rgba(212,175,55,0.85)', color:'#060a14' },
                                 }}
                             >
                                 {copied

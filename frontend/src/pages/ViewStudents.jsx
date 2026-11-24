@@ -13,31 +13,30 @@ import { useTranslation } from 'react-i18next';
 // ─── Global Styles ─────────────────────────────────────────────────────────
 const GlobalStyle = () => (
   <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap');
-
     :root {
       --bg:          transparent;
-      --bg2:         rgba(15, 23, 42, 0.75);
-      --bg3:         rgba(30, 41, 59, 0.65);
-      --bg4:         rgba(30, 41, 59, 0.85);
+      --bg2:         rgba(12, 20, 38, 0.78);
+      --bg3:         rgba(18, 30, 56, 0.68);
+      --bg4:         rgba(22, 36, 66, 0.88);
       --surface:     rgba(255,255,255,0.04);
-      --surface2:    rgba(255,255,255,0.07);
-      --surface3:    rgba(255,255,255,0.11);
-      --border:      rgba(255,255,255,0.08);
-      --border2:     rgba(255,255,255,0.14);
-      --border3:     rgba(255,255,255,0.22);
+      --surface2:    rgba(255,255,255,0.08);
+      --surface3:    rgba(255,255,255,0.12);
+      --border:      rgba(212,175,55,0.14);
+      --border2:     rgba(212,175,55,0.22);
+      --border3:     rgba(212,175,55,0.35);
       --accent:      #d4af37;
-      --accent-dim:  rgba(99,102,241,0.15);
-      --accent-glow: rgba(99,102,241,0.35);
-      --cyan:        #06b6d4;
-      --cyan-dim:    rgba(6,182,212,0.15);
+      --accent-dark: #aa820a;
+      --accent-dim:  rgba(212,175,55,0.14);
+      --accent-glow: rgba(212,175,55,0.32);
+      --cyan:        #38bdf8;
+      --cyan-dim:    rgba(56,189,248,0.14);
       --green:       #10b981;
       --green-dim:   rgba(16,185,129,0.15);
       --orange:      #f59e0b;
       --orange-dim:  rgba(245,158,11,0.15);
       --red:         #f43f5e;
       --red-dim:     rgba(244,63,94,0.15);
-      --gold:        #fbbf24;
+      --gold:        #d4af37;
       --text:        #f8fafc;
       --text2:       #94a3b8;
       --text3:       #64748b;
@@ -45,21 +44,25 @@ const GlobalStyle = () => (
       --r:           14px;
       --r-lg:        18px;
       --r-xl:        22px;
-      --font:        'Plus Jakarta Sans', 'Inter', sans-serif;
+      --font:        'Outfit', 'Plus Jakarta Sans', 'Inter', sans-serif;
       --mono:        'JetBrains Mono', monospace;
     }
 
     body[data-theme='light'], [data-theme='light'] {
       --bg:          transparent;
-      --bg2:         rgba(255, 255, 255, 0.88);
+      --bg2:         rgba(255, 255, 255, 0.9);
       --bg3:         rgba(241, 245, 249, 0.88);
-      --bg4:         rgba(226, 232, 240, 0.9);
-      --surface:     rgba(255, 255, 255, 0.75);
-      --surface2:    rgba(255, 255, 255, 0.95);
+      --bg4:         rgba(226, 232, 240, 0.92);
+      --surface:     rgba(255, 255, 255, 0.78);
+      --surface2:    rgba(255, 255, 255, 0.96);
       --surface3:    rgba(241, 245, 249, 0.98);
       --border:      rgba(15, 23, 42, 0.08);
-      --border2:     rgba(15, 23, 42, 0.12);
-      --border3:     rgba(15, 23, 42, 0.22);
+      --border2:     rgba(184, 134, 11, 0.2);
+      --border3:     rgba(184, 134, 11, 0.35);
+      --accent:      #b8860b;
+      --accent-dark: #926808;
+      --accent-dim:  rgba(184, 134, 11, 0.12);
+      --accent-glow: rgba(184, 134, 11, 0.25);
       --text:        #0f172a;
       --text2:       #475569;
       --text3:       #64748b;
@@ -67,72 +70,98 @@ const GlobalStyle = () => (
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    .vs { min-height: 100vh; background: var(--bg); font-family: var(--font); color: var(--text); }
+    .vs { min-height: 100%; background: var(--bg); font-family: var(--font); color: var(--text); }
 
-    .vs-inner { max-width: 1140px; margin: 0 auto; padding: 20px 12px 80px; }
+    .vs-inner { max-width: 1180px; margin: 0 auto; padding: 8px 4px 60px; }
 
     /* ── Page Header ── */
-    .ph { margin-bottom: 32px; }
+    .ph { margin-bottom: 26px; }
     .ph-row { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
     .ph-icon {
       width: 44px; height: 44px; border-radius: var(--r);
-      background: var(--accent-dim); border: 1px solid rgba(99,102,241,0.25);
+      background: var(--accent-dim); border: 1px solid rgba(212,175,55,0.3);
       display: flex; align-items: center; justify-content: center; font-size: 1.15rem; flex-shrink: 0;
     }
-    .ph-title { font-size: clamp(1.6rem,3vw,2.2rem); font-weight: 800; letter-spacing: -0.8px; }
+    .ph-title { font-size: clamp(1.5rem,3vw,2.15rem); font-weight: 800; letter-spacing: -0.8px; }
     .ph-sub { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.8px; color: var(--text3); font-weight: 600; margin-left: 58px; }
+    @media (max-width: 480px) {
+      .ph-sub { margin-left: 0; margin-top: 4px; }
+    }
 
     /* ── Nav Row (back + breadcrumb) ── */
-    .nav-row { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+    .nav-row { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; flex-wrap: wrap; }
     .back-btn {
       width: 40px; height: 40px; border-radius: var(--r); flex-shrink: 0;
       background: var(--surface2); border: 1px solid var(--border2);
       color: var(--text2); cursor: pointer; font-size: 1rem; font-family: var(--font);
       display: flex; align-items: center; justify-content: center;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), color 0.2s, border-color 0.2s, background 0.2s;
     }
     .back-btn:hover { color: var(--text); border-color: var(--border3); transform: translateX(-3px); background: var(--surface3); }
+    .back-btn:active { transform: scale(0.94); }
 
-    .breadcrumb { display: flex; align-items: center; gap: 10px; font-size: clamp(1.05rem,2vw,1.45rem); font-weight: 800; letter-spacing: -0.4px; }
+    .breadcrumb { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: clamp(1rem,2vw,1.4rem); font-weight: 800; letter-spacing: -0.4px; }
     .bc-dim { color: var(--text3); }
     .bc-sep { color: var(--border3); }
     .bc-active { color: var(--accent); }
 
     /* ── Grade / Subject Grid ── */
-    .sel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 16px; }
-    @media (max-width: 580px) { .sel-grid { grid-template-columns: repeat(2,1fr); } }
+    .sel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(195px, 1fr)); gap: 16px; }
+    @media (max-width: 580px) { .sel-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+    @media (max-width: 340px) { .sel-grid { grid-template-columns: 1fr; } }
 
     .sel-card {
-      padding: 28px 18px 22px; border-radius: var(--r-xl);
+      padding: 26px 16px 20px; border-radius: var(--r-xl);
       background: var(--bg2); border: 1px solid var(--border);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       cursor: pointer; text-align: center; min-height: 170px;
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
-      transition: border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+      transition: border-color 0.22s cubic-bezier(0.22, 1, 0.36, 1), background 0.22s, transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.24s cubic-bezier(0.22, 1, 0.36, 1);
       position: relative;
+      overflow: hidden;
     }
-    .sel-card:hover { border-color: var(--accent); background: var(--surface2); transform: translateY(-5px); box-shadow: 0 20px 40px -10px var(--accent-glow); }
-    .sel-card.hero { background: var(--accent-dim); border-color: rgba(99,102,241,0.28); }
-    .sel-card.hero:hover { border-color: rgba(99,102,241,0.5); box-shadow: 0 20px 48px rgba(99,102,241,0.2); }
+    .sel-card:hover { border-color: var(--accent); background: var(--surface2); transform: translateY(-5px); box-shadow: 0 18px 38px -10px var(--accent-glow); }
+    .sel-card:active { transform: scale(0.97); }
+    .sel-card.hero { background: linear-gradient(145deg, rgba(212,175,55,0.18), rgba(212,175,55,0.06)); border-color: rgba(212,175,55,0.35); }
+    .sel-card.hero:hover { border-color: var(--accent); box-shadow: 0 20px 44px rgba(212,175,55,0.24); }
+    @media (max-width: 580px) {
+      .sel-card { padding: 20px 12px 16px; min-height: 150px; border-radius: 18px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+    }
 
     .grade-circle {
-      width: 66px; height: 66px; border-radius: 18px;
-      background: rgba(34,211,238,0.1); border: 1px solid rgba(34,211,238,0.22);
+      width: 64px; height: 64px; border-radius: 18px;
+      background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.25);
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.55rem; font-weight: 800; color: var(--cyan); letter-spacing: -1px;
+      font-size: 1.5rem; font-weight: 800; color: var(--cyan); letter-spacing: -1px;
+      transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
     }
+    .sel-card:hover .grade-circle,
+    .sel-card:hover .subj-circle { transform: scale(1.06); }
     .subj-circle {
       width: 58px; height: 58px; border-radius: 16px;
       display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+      transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
     }
-    .card-name { font-size: 0.92rem; font-weight: 700; color: var(--text); line-height: 1.2; }
-    .card-hint { font-size: 0.66rem; color: var(--text3); margin-top: 3px; }
+    .card-name { font-size: 0.94rem; font-weight: 700; color: var(--text); line-height: 1.25; }
+    .card-hint { font-size: 0.68rem; color: var(--text3); margin-top: 3px; }
+    .teacher-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      margin-top: 6px; padding: 3px 9px; border-radius: 99px;
+      background: var(--accent-dim); border: 1px solid rgba(212,175,55,0.28);
+      color: var(--accent); font-size: 0.66rem; font-weight: 700;
+      max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
 
-    .card-edit-btn {
+    .card-actions-corner {
       position: absolute;
       top: 10px;
       right: 10px;
+      display: flex;
+      gap: 6px;
+      z-index: 5;
+    }
+    .card-edit-btn {
       width: 30px;
       height: 30px;
       border-radius: 8px;
@@ -144,22 +173,27 @@ const GlobalStyle = () => (
       justify-content: center;
       cursor: pointer;
       opacity: 0;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 5;
+      transition: all 0.18s cubic-bezier(0.22, 1, 0.36, 1);
     }
     .sel-card:hover .card-edit-btn {
       opacity: 1;
     }
     .card-edit-btn:hover {
       background: var(--accent);
-      color: #fff;
+      color: #060a14;
       border-color: var(--accent);
-      transform: scale(1.12);
+      transform: scale(1.1);
       box-shadow: 0 4px 12px var(--accent-glow);
     }
-    @media (hover: none) {
+    .card-edit-btn.remove:hover {
+      background: var(--red);
+      color: #fff;
+      border-color: var(--red);
+      box-shadow: 0 4px 12px rgba(244,63,94,0.4);
+    }
+    @media (hover: none), (max-width: 899px) {
       .card-edit-btn {
-        opacity: 0.85;
+        opacity: 0.9;
       }
     }
     .sel-card.add-subj-card {
@@ -244,9 +278,9 @@ const GlobalStyle = () => (
       opacity: 1;
     }
     .search-input:focus {
-      border-color: rgba(99,102,241,0.5);
+      border-color: rgba(212,175,55,0.6);
       background: var(--bg4);
-      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.18);
     }
     .mobile-idx-badge {
       display: none;
@@ -317,10 +351,10 @@ const GlobalStyle = () => (
     .stu-row {
       display: grid; grid-template-columns: 44px 1fr 150px 90px 72px 36px;
       align-items: center; padding: 14px 18px; cursor: pointer; gap: 8px;
-      transition: all 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: background 0.16s cubic-bezier(0.22, 1, 0.36, 1);
     }
-    .stu-row:hover { background: rgba(99,102,241,0.06); }
-    .stu-row.open { background: rgba(99,102,241,0.09); }
+    .stu-row:hover { background: rgba(212,175,55,0.06); }
+    .stu-row.open { background: rgba(212,175,55,0.1); }
     @media (max-width: 620px) {
       .stu-row { grid-template-columns: 38px 1fr 80px 58px 28px; padding: 11px 12px; }
     }
@@ -330,14 +364,14 @@ const GlobalStyle = () => (
 
     .avatar {
       width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
-      background: linear-gradient(135deg, var(--accent), #c8960c);
+      background: linear-gradient(135deg, #f5d77f, #d4af37);
       display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-size: 0.85rem; color: white; letter-spacing: -0.5px;
+      font-weight: 800; font-size: 0.85rem; color: #060a14; letter-spacing: -0.5px;
     }
     .stu-name-cell { min-width: 0; }
     .stu-name { font-weight: 600; font-size: 0.875rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .stu-grade-lbl { font-size: 0.63rem; color: var(--text3); margin-top: 2px; }
-    .stu-idx { font-family: var(--mono); font-size: 0.7rem; color: var(--cyan); background: var(--cyan-dim); border: 1px solid rgba(34,211,238,0.18); padding: 3px 8px; border-radius: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .stu-idx { font-family: var(--mono); font-size: 0.7rem; color: var(--cyan); background: var(--cyan-dim); border: 1px solid rgba(56,189,248,0.18); padding: 3px 8px; border-radius: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .stu-att { font-weight: 700; font-size: 0.8rem; font-family: var(--mono); }
 
     .badge { padding: 3px 9px; border-radius: 99px; font-size: 0.62rem; font-weight: 700; }
@@ -348,7 +382,7 @@ const GlobalStyle = () => (
     .chev.open { transform: rotate(90deg); color: var(--accent); }
 
     /* ── Student detail panel ── */
-    .stu-detail { background: rgba(99,102,241,0.025); border-top: 1px solid rgba(99,102,241,0.1); }
+    .stu-detail { background: rgba(212,175,55,0.03); border-top: 1px solid rgba(212,175,55,0.14); }
     .detail-body { padding: 22px 18px 26px; }
 
     .sec-lbl {
@@ -358,7 +392,7 @@ const GlobalStyle = () => (
     .sec-lbl::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
     /* Action Bar */
-    .action-bar { display: flex; gap: 10px; margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px dashed var(--border2); }
+    .action-bar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px dashed var(--border2); }
     .action-btn { 
       padding: 8px 14px; border-radius: var(--r-sm); border: 1px solid var(--border);
       background: var(--surface); color: var(--text2); font-size: 0.75rem; font-weight: 600; font-family: var(--font);
@@ -387,7 +421,7 @@ const GlobalStyle = () => (
       background: var(--bg3); border: 1px solid var(--border);
       border-radius: var(--r); padding: 12px 12px 10px;
     }
-    .mo-card.now { border-color: rgba(99,102,241,0.35); background: rgba(99,102,241,0.06); }
+    .mo-card.now { border-color: rgba(212,175,55,0.45); background: rgba(212,175,55,0.07); }
 
     .mo-name { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.4px; color: var(--text3); margin-bottom: 10px; }
     .mo-meta { display: flex; align-items: center; gap: 7px; margin-bottom: 9px; font-size: 0.7rem; color: var(--text3); }
@@ -426,7 +460,7 @@ const GlobalStyle = () => (
     .pg-btn:disabled { opacity: 0.2; cursor: default; }
 
     /* ── Loader ── */
-    .spinner { width: 36px; height: 36px; border: 3px solid rgba(99,102,241,0.12); border-top-color: var(--accent); border-radius: 50%; animation: vs-spin 0.7s linear infinite; }
+    .spinner { width: 36px; height: 36px; border: 3px solid rgba(212,175,55,0.15); border-top-color: var(--accent); border-radius: 50%; animation: vs-spin 0.7s linear infinite; }
     @keyframes vs-spin { to { transform: rotate(360deg); } }
     .centered { display: flex; justify-content: center; align-items: center; padding: 56px 0; }
     .empty { text-align: center; padding: 44px; font-size: 0.85rem; color: var(--text3); }
@@ -489,63 +523,63 @@ const GlobalStyle = () => (
 );
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 
 const SUBJ_META = {
   Mathematics: { color: '#f87171', bg: 'rgba(248,113,113,0.12)', icon: '📐' },
-  Science:     { color: '#22d3ee', bg: 'rgba(34,211,238,0.12)',  icon: '🔬' },
-  English:     { color: '#4ade80', bg: 'rgba(74,222,128,0.12)',  icon: '📖' },
-  ICT:         { color: '#a78bfa', bg: 'rgba(167,139,250,0.12)', icon: '💻' },
-  Business:    { color: '#fb923c', bg: 'rgba(251,146,60,0.12)',  icon: '📊' },
-  Scholarship: { color: '#fbbf24', bg: 'rgba(251,191,36,0.12)',  icon: '🏆' },
-  Sinhala:     { color: '#ec4899', bg: 'rgba(236,72,153,0.12)',  icon: '✍️' },
+  Science: { color: '#22d3ee', bg: 'rgba(34,211,238,0.12)', icon: '🔬' },
+  English: { color: '#4ade80', bg: 'rgba(74,222,128,0.12)', icon: '📖' },
+  ICT: { color: '#a78bfa', bg: 'rgba(167,139,250,0.12)', icon: '💻' },
+  Business: { color: '#fb923c', bg: 'rgba(251,146,60,0.12)', icon: '📊' },
+  Scholarship: { color: '#fbbf24', bg: 'rgba(251,191,36,0.12)', icon: '🏆' },
+  Sinhala: { color: '#ec4899', bg: 'rgba(236,72,153,0.12)', icon: '✍️' },
 };
 
 const WHATSAPP_GROUP_LINKS = {
-    'Grade 03': 'https://chat.whatsapp.com/JDa517chrKQ9459MfzRSZC',
-    'Grade 04': 'https://chat.whatsapp.com/Il7vUb6trXOBViX4U46dfm',
-    'Grade 05': 'https://chat.whatsapp.com/K0df52vVfPoDjFuLtYrneG',
-    'Grade 06': 'https://chat.whatsapp.com/Ebz4zJgdDhDEn1p2Z6HzbX',
-    'Grade 07': 'https://chat.whatsapp.com/Ko87JpVAHdMJ3UCIDHh22a',
-    'Grade 08': 'https://chat.whatsapp.com/LfrLuuB0NmE37Bul1cSwog',
-    'Grade 09': 'https://chat.whatsapp.com/KEoJ2cotqWUA92EZA5R4W7',
-    'Grade 10': 'https://chat.whatsapp.com/KOJD2PNrd936IHgWxLGotB',
-    'Grade 11': 'https://chat.whatsapp.com/IuCquSU1EPHB9TcORCUdrz',
-    'Rapid Revision': 'https://chat.whatsapp.com/DsOyVcdCWhO5SaKaWdRSLo',
+  'Grade 03': 'https://chat.whatsapp.com/JDa517chrKQ9459MfzRSZC',
+  'Grade 04': 'https://chat.whatsapp.com/Il7vUb6trXOBViX4U46dfm',
+  'Grade 05': 'https://chat.whatsapp.com/K0df52vVfPoDjFuLtYrneG',
+  'Grade 06': 'https://chat.whatsapp.com/Ebz4zJgdDhDEn1p2Z6HzbX',
+  'Grade 07': 'https://chat.whatsapp.com/Ko87JpVAHdMJ3UCIDHh22a',
+  'Grade 08': 'https://chat.whatsapp.com/LfrLuuB0NmE37Bul1cSwog',
+  'Grade 09': 'https://chat.whatsapp.com/KEoJ2cotqWUA92EZA5R4W7',
+  'Grade 10': 'https://chat.whatsapp.com/KOJD2PNrd936IHgWxLGotB',
+  'Grade 11': 'https://chat.whatsapp.com/IuCquSU1EPHB9TcORCUdrz',
+  'Rapid Revision': 'https://chat.whatsapp.com/DsOyVcdCWhO5SaKaWdRSLo',
 };
 
 let globalGradeConfigs = {};
 
 const sendWhatsAppGroupLink = (student) => {
-    try {
-        if (!student.mobile) {
-            alert('No mobile number provided for this student.');
-            return;
-        }
-        let formattedNumber = student.mobile.trim().replace(/[\s-]/g, '');
-        if (formattedNumber.startsWith('0')) formattedNumber = '94' + formattedNumber.substring(1);
-        else if (formattedNumber.startsWith('+94')) formattedNumber = formattedNumber.substring(1);
-        else if (formattedNumber.length === 9 && !formattedNumber.startsWith('94')) formattedNumber = '94' + formattedNumber;
-        
-        const configuredLink = globalGradeConfigs[student.grade]?.whatsappLink;
-        const groupLink = configuredLink || WHATSAPP_GROUP_LINKS[student.grade];
-        if (!groupLink) {
-            alert(`No WhatsApp group link configured for ${student.grade}`);
-            return;
-        }
-        const message = `Welcome to Osra Education Institute!\nHere is your ${student.grade} WhatsApp Group Link: ${groupLink}`;
-        const url = `https://wa.me/${formattedNumber}?text=${encodeURIComponent(message)}`;
-        window.open(url, '_blank', 'noopener,noreferrer');
-    } catch (error) {
-        console.error("Error opening WhatsApp link:", error);
+  try {
+    if (!student.mobile) {
+      alert('No mobile number provided for this student.');
+      return;
     }
+    let formattedNumber = student.mobile.trim().replace(/[\s-]/g, '');
+    if (formattedNumber.startsWith('0')) formattedNumber = '94' + formattedNumber.substring(1);
+    else if (formattedNumber.startsWith('+94')) formattedNumber = formattedNumber.substring(1);
+    else if (formattedNumber.length === 9 && !formattedNumber.startsWith('94')) formattedNumber = '94' + formattedNumber;
+
+    const configuredLink = globalGradeConfigs[student.grade]?.whatsappLink;
+    const groupLink = configuredLink || WHATSAPP_GROUP_LINKS[student.grade];
+    if (!groupLink) {
+      alert(`No WhatsApp group link configured for ${student.grade}`);
+      return;
+    }
+    const message = `Welcome to Osra Education Institute!\nHere is your ${student.grade} WhatsApp Group Link: ${groupLink}`;
+    const url = `https://wa.me/${formattedNumber}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+  } catch (error) {
+    console.error("Error opening WhatsApp link:", error);
+  }
 };
 
 const getSubjMeta = name => {
   for (const [k, v] of Object.entries(SUBJ_META)) {
     if (name?.includes(k)) return v;
   }
-  return { color: '#d4af37', bg: 'rgba(99,102,241,0.12)', icon: '📚' };
+  return { color: '#d4af37', bg: 'rgba(212,175,55,0.14)', icon: '📚' };
 };
 
 const attColor = pct => pct >= 75 ? '#4ade80' : pct >= 50 ? '#22d3ee' : '#fb923c';
@@ -563,9 +597,9 @@ const fmtGrade = g => {
 function shouldShowSubject(sub, grade) {
   if (!grade) return true;
 
-  // 1. If the subject has gradeSchedules configured, match based on that
+  // 1. If the subject has gradeSchedules configured, match strictly based on that
   if (sub.gradeSchedules && sub.gradeSchedules.length > 0) {
-    // Direct match (e.g. "Grade 06 2027" === "Grade 06 2027")
+    // Direct match (e.g. "Grade 06" === "Grade 06")
     if (sub.gradeSchedules.some(s => s.grade?.toLowerCase() === grade.toLowerCase())) {
       return true;
     }
@@ -583,8 +617,7 @@ function shouldShowSubject(sub, grade) {
     return false;
   }
 
-  // Fallback: If no gradeSchedules exist (e.g. legacy subjects or newly created),
-  // use name-based heuristics to match the grade.
+  // Fallback: If no gradeSchedules exist, check if subject name explicitly specifies this grade
   const name = sub.name || '';
   const isRR = name.toLowerCase().includes('rapid revision') || name.toLowerCase().includes('rr');
 
@@ -592,30 +625,26 @@ function shouldShowSubject(sub, grade) {
     return isRR;
   }
 
-  // If this is a Rapid Revision subject, do NOT match regular grades!
   if (isRR) {
     return false;
   }
 
+  // Only match if the subject name explicitly mentions this grade (e.g. "Mathematics Grade 07")
   const nMatch = grade.match(/^Grade\s*0*(\d+)/i);
-  const n = nMatch ? parseInt(nMatch[1], 10) : 0;
+  if (nMatch) {
+    const num = nMatch[1];
+    const regex = new RegExp(`(?:Grade\\s*0*${num}|G\\s*0*${num})\\b`, 'i');
+    if (regex.test(name)) return true;
+  }
 
-  if (n >= 6 && n <= 9) {
-    return ['Mathematics','Science','English','ICT','Sinhala'].some(k => name.includes(k));
-  }
-  if (n === 10 || n === 11) {
-    return ['Mathematics','Science','English','ICT','Business','Sinhala'].some(k => name.includes(k));
-  }
-  if (n >= 3 && n <= 5) {
-    return name.toLowerCase().includes('scholarship') && name.includes(String(n));
-  }
-  return true;
+  // Do NOT automatically force subjects into grades they were not assigned to
+  return false;
 }
 
 // ─── Pager ────────────────────────────────────────────────────────────────────
 function Pager({ page, total, onChange }) {
   if (total <= 1) return null;
-  const pages   = Array.from({ length: total }, (_, i) => i + 1);
+  const pages = Array.from({ length: total }, (_, i) => i + 1);
   const visible = pages.filter(p => p === 1 || p === total || Math.abs(p - page) <= 1);
   return (
     <div className="pager">
@@ -658,30 +687,30 @@ function StudentRow({ student, onUpdate, onEdit, subjectColors, onOpenFeeModal }
       iconType: 'info',
       customBody: (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '16px' }}>
-          <button 
+          <button
             onClick={() => applyUpdate('present')}
             style={{ padding: '10px', borderRadius: '8px', border: 'none', background: 'var(--green)', color: '#fff', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
           >
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
             Mark Present
           </button>
-          
-          <button 
+
+          <button
             onClick={() => applyUpdate('absent')}
             style={{ padding: '10px', borderRadius: '8px', border: 'none', background: 'var(--orange)', color: '#fff', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
           >
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
             Mark Absent
           </button>
 
-          <button 
+          <button
             onClick={() => applyUpdate('pending')}
             style={{ padding: '10px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--surface2)', color: 'var(--text2)', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '4px' }}
           >
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/></svg>
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /></svg>
             Clear (Pending)
           </button>
-          
+
           <button className="confirm-btn cancel" onClick={() => setConfirmOpts(null)} style={{ marginTop: '8px', justifyContent: 'center', width: '100%' }}>Cancel</button>
         </div>
       )
@@ -719,7 +748,7 @@ function StudentRow({ student, onUpdate, onEdit, subjectColors, onOpenFeeModal }
     const applyUpdate = async () => {
       try {
         await axios.patch(`${API_BASE_URL}/api/records/${student._id}/${encodeURIComponent(subjectName)}/${monthIndex}/daily-fee/${weekIndex}`, {});
-        
+
         if (!isPaid && student.mobile) {
           let mobile = student.mobile.replace(/[^\d+]/g, '').trim();
           if (mobile.startsWith('+94')) mobile = '0' + mobile.slice(3);
@@ -731,9 +760,9 @@ function StudentRow({ student, onUpdate, onEdit, subjectColors, onOpenFeeModal }
           const weeksList = ["1 වන සතිය", "2 වන සතිය", "3 වන සතිය", "4 වන සතිය", "5 වන සතිය"];
           const weekName = weeksList[weekIndex];
           const feeAmount = subjectColors?.[subjectName]?.fee || 0;
-          
+
           const message = `ආයුබෝවන් ${student.name},\nඔබගේ ${subjectName} පන්තියේ ${monthName} (${weekName}) ගාස්තුව (රු. ${feeAmount.toLocaleString()}) සාර්ථකව ලැබී ඇත.\nස්තූතියි!\nOsra Education Institute`;
-          
+
           const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
           const sep = isIOS ? '&' : '?';
           window.location.href = `sms:${mobile}${sep}body=${encodeURIComponent(message)}`;
@@ -762,7 +791,7 @@ function StudentRow({ student, onUpdate, onEdit, subjectColors, onOpenFeeModal }
 
   const stats = React.useMemo(() => {
     let total = 0, attended = 0;
-    
+
     const isP = s => s === 'present' || s === true || s === 'true' || (typeof s === 'string' && s.toLowerCase() === 'present');
     const isA = s => s === 'absent' || (typeof s === 'string' && s.toLowerCase() === 'absent');
 
@@ -787,7 +816,7 @@ function StudentRow({ student, onUpdate, onEdit, subjectColors, onOpenFeeModal }
       });
       const activeRecords = (e.monthlyRecords || []).filter(r => !isNotEnrolledInMonth(e, student, r.monthIndex));
       const feesTotal = activeRecords.length || 0;
-      const feesPaid  = activeRecords.filter(r => r.feePaid).length || 0;
+      const feesPaid = activeRecords.filter(r => r.feePaid).length || 0;
       return {
         name: e.subject,
         pct: st === 0 ? 0 : Math.round((sa / st) * 100),
@@ -858,7 +887,7 @@ function StudentRow({ student, onUpdate, onEdit, subjectColors, onOpenFeeModal }
       {open && (
         <div className="stu-detail slide-in">
           <div className="detail-body">
-            
+
             {/* Action Bar */}
             <div className="action-bar" style={{ flexWrap: 'wrap' }}>
               <div className="action-btn" style={{ cursor: 'default', background: 'var(--surface2)', pointerEvents: 'none' }}>
@@ -866,11 +895,11 @@ function StudentRow({ student, onUpdate, onEdit, subjectColors, onOpenFeeModal }
                 <span style={{ fontFamily: 'var(--mono)', fontSize: '0.8rem' }}>{student.mobile || 'No Number'}</span>
               </div>
               <button className="action-btn wa" onClick={() => sendWhatsAppGroupLink(student)}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z" /></svg>
                 Group Link
               </button>
               <button className="action-btn wa" onClick={handleSendMonthlyFeeStatus}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z" /></svg>
                 Fee Status
               </button>
               <button
@@ -900,12 +929,12 @@ function StudentRow({ student, onUpdate, onEdit, subjectColors, onOpenFeeModal }
                   iconType: 'danger',
                   confirmText: 'Delete Permanently',
                   onConfirm: async () => {
-                    try { 
-                      await axios.delete(API_BASE_URL + '/api/students/' + student._id); 
-                      if (onUpdate) onUpdate(); 
-                    } catch(e) { 
-                      console.error(e); 
-                      alert('Error deleting'); 
+                    try {
+                      await axios.delete(API_BASE_URL + '/api/students/' + student._id);
+                      if (onUpdate) onUpdate();
+                    } catch (e) {
+                      console.error(e);
+                      alert('Error deleting');
                     }
                     setConfirmOpts(null);
                   }
@@ -918,7 +947,7 @@ function StudentRow({ student, onUpdate, onEdit, subjectColors, onOpenFeeModal }
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
                 Class Card
               </button>
-              <button className="action-btn" onClick={() => generateFeeReport(student, subjectColors, stats, t, i18n.language)} style={{ background: 'var(--accent-dim)', color: 'var(--accent)', borderColor: 'rgba(99,102,241,0.25)' }}>
+              <button className="action-btn" onClick={() => generateFeeReport(student, subjectColors, stats, t, i18n.language)} style={{ background: 'var(--accent-dim)', color: 'var(--accent)', borderColor: 'rgba(212,175,55,0.28)' }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                 {t('download_pdf')}
               </button>
@@ -957,19 +986,19 @@ function StudentRow({ student, onUpdate, onEdit, subjectColors, onOpenFeeModal }
                   </div>
                   <div className="months-scroll">
                     {MONTHS.map((m, mi) => {
-                      const rec        = subj.monthlyRecords?.find(r => r.monthIndex === mi);
-                      const nowMonth   = new Date().getMonth();
-                      const isCurrent  = mi === nowMonth;
-                      const isFuture   = !rec && mi > nowMonth;
+                      const rec = subj.monthlyRecords?.find(r => r.monthIndex === mi);
+                      const nowMonth = new Date().getMonth();
+                      const isCurrent = mi === nowMonth;
+                      const isFuture = !rec && mi > nowMonth;
                       const notEnrolled = isNotEnrolledInMonth(subjEnrollment, student, mi);
-                      const att        = rec?.attendance || [];
+                      const att = rec?.attendance || [];
                       const isDaily = subjectColors?.[subj.name]?.feeType === 'daily';
                       return (
-                        <div 
-                          key={m} 
-                          className={`mo-card${isCurrent ? ' now' : ''}${notEnrolled ? ' not-enrolled' : ''}`} 
+                        <div
+                          key={m}
+                          className={`mo-card${isCurrent ? ' now' : ''}${notEnrolled ? ' not-enrolled' : ''}`}
                           title={notEnrolled ? `${m}: Student was not yet enrolled in ${subj.name}` : undefined}
-                          style={{ 
+                          style={{
                             opacity: notEnrolled ? 0.35 : isFuture ? 0.3 : 1,
                             filter: notEnrolled ? 'grayscale(0.9)' : 'none',
                             borderStyle: notEnrolled ? 'dashed' : 'solid',
@@ -994,16 +1023,16 @@ function StudentRow({ student, onUpdate, onEdit, subjectColors, onOpenFeeModal }
                                 {Array.from({ length: Math.max(rec?.dailyFeesPaid?.length || 0, subjectColors?.[subj.name]?.classDaysCount || 5) }).map((_, wIdx) => {
                                   const isWeekPaid = rec?.dailyFeesPaid ? rec.dailyFeesPaid[wIdx] : false;
                                   return (
-                                    <span 
-                                      key={wIdx} 
-                                      title={`Week ${wIdx + 1} payment: ${isWeekPaid ? 'Paid' : 'Pending'}`} 
-                                      onClick={(e) => { 
-                                        e.stopPropagation(); 
-                                        handleToggleDailyFee(subj.name, mi, wIdx, isWeekPaid); 
+                                    <span
+                                      key={wIdx}
+                                      title={`Week ${wIdx + 1} payment: ${isWeekPaid ? 'Paid' : 'Pending'}`}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleToggleDailyFee(subj.name, mi, wIdx, isWeekPaid);
                                       }}
-                                      style={{ 
-                                        cursor: 'pointer', 
-                                        fontSize: '0.65rem', 
+                                      style={{
+                                        cursor: 'pointer',
+                                        fontSize: '0.65rem',
                                         color: isWeekPaid ? '#4ade80' : 'var(--text3)',
                                         fontWeight: 'bold',
                                         background: isWeekPaid ? 'rgba(74,222,128,0.1)' : 'rgba(255,255,255,0.05)',
@@ -1019,7 +1048,7 @@ function StudentRow({ student, onUpdate, onEdit, subjectColors, onOpenFeeModal }
                               </div>
                             ) : (
                               <span className="mo-fee" title={rec?.feePaid ? 'Fee paid' : 'Fee pending'} onClick={(e) => { e.stopPropagation(); handleToggleFee(subj.name, mi, !!rec?.feePaid); }} style={{ cursor: 'pointer', display: 'flex' }}>
-                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{color: rec?.feePaid ? '#4ade80' : 'var(--text3)'}}>
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: rec?.feePaid ? '#4ade80' : 'var(--text3)' }}>
                                   <line x1="12" y1="1" x2="12" y2="23"></line>
                                   <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                                 </svg>
@@ -1038,19 +1067,19 @@ function StudentRow({ student, onUpdate, onEdit, subjectColors, onOpenFeeModal }
                             ) : att.length === 0
                               ? <span className="no-data">No data</span>
                               : att.map((s, i) => {
-                                  const isA = s === 'absent' || (typeof s === 'string' && s.toLowerCase() === 'absent');
-                                  const isP = s === 'present' || s === true || s === 'true' || (typeof s === 'string' && s.toLowerCase() === 'present');
-                                  const isQ = !isA && !isP;
-                                  
-                                  // Determine current normalized status to pass to toggle
-                                  const normStatus = isA ? 'absent' : isP ? 'present' : 'pending';
+                                const isA = s === 'absent' || (typeof s === 'string' && s.toLowerCase() === 'absent');
+                                const isP = s === 'present' || s === true || s === 'true' || (typeof s === 'string' && s.toLowerCase() === 'present');
+                                const isQ = !isA && !isP;
 
-                                  return (
-                                    <div key={i} className={`dot ${isQ ? 'dot-q' : isP ? 'dot-p' : 'dot-a'}`} onClick={(e) => { e.stopPropagation(); handleToggleAttendance(subj.name, mi, i, normStatus); }}>
-                                      {isQ ? '' : isP ? '✓' : '✗'}
-                                    </div>
-                                  );
-                                })
+                                // Determine current normalized status to pass to toggle
+                                const normStatus = isA ? 'absent' : isP ? 'present' : 'pending';
+
+                                return (
+                                  <div key={i} className={`dot ${isQ ? 'dot-q' : isP ? 'dot-p' : 'dot-a'}`} onClick={(e) => { e.stopPropagation(); handleToggleAttendance(subj.name, mi, i, normStatus); }}>
+                                    {isQ ? '' : isP ? '✓' : '✗'}
+                                  </div>
+                                );
+                              })
                             }
                           </div>
                         </div>
@@ -1174,20 +1203,21 @@ function StudentRow({ student, onUpdate, onEdit, subjectColors, onOpenFeeModal }
 // ─── Main ─────────────────────────────────────────────────────────────────────
 export default function ViewStudents() {
   // ── State (identical to original) ──
-  const [viewMode, setViewMode]               = useState('grades');
-  const [selectedGrade, setSelectedGrade]     = useState(null);
+  const [viewMode, setViewMode] = useState('grades');
+  const [selectedGrade, setSelectedGrade] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
 
-  const [grades, setGrades]       = useState([]);
-  const [subjects, setSubjects]   = useState([]);
-  const [students, setStudents]   = useState([]);
+  const [grades, setGrades] = useState([]);
+  const [subjects, setSubjects] = useState([]);
+  const [teachers, setTeachers] = useState([]);
+  const [students, setStudents] = useState([]);
   const [subjectColors, setSubjectColors] = useState({});
 
-  const [page, setPage]             = useState(1);
+  const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [search, setSearch]         = useState('');
-  const [loading, setLoading]       = useState(false);
-  
+  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const [editingStudent, setEditingStudent] = useState(null);
   const [editingSubject, setEditingSubject] = useState(null);
   const [isAddingSubject, setIsAddingSubject] = useState(false);
@@ -1239,7 +1269,7 @@ export default function ViewStudents() {
     finally { setLoading(false); }
   };
 
-  // ── Fetch subjects (same as original) ──
+  // ── Fetch subjects & teachers ──
   const fetchSubjects = async () => {
     try {
       const r = await axios.get(`${API_BASE_URL}/api/subjects`);
@@ -1248,6 +1278,32 @@ export default function ViewStudents() {
       r.data.forEach(sub => { map[sub.name] = sub; });
       setSubjectColors(map);
     } catch (e) { console.error(e); }
+  };
+
+  const fetchTeachers = async () => {
+    try {
+      const r = await axios.get(`${API_BASE_URL}/api/auth/teachers`);
+      setTeachers(r.data || []);
+    } catch (e) { console.error(e); }
+  };
+
+  const handleRemoveSubjectFromGrade = async (sub, gradeName) => {
+    if (!sub || !sub.name || !gradeName) return;
+    if (!window.confirm(`Remove "${sub.name}" from "${gradeName}" only?\n\nOther grades and the teacher will remain untouched.`)) {
+      return;
+    }
+    try {
+      const remaining = (sub.gradeSchedules || []).filter(
+        s => s.grade?.toLowerCase() !== gradeName.toLowerCase()
+      );
+      await axios.put(`${API_BASE_URL}/api/subjects/${encodeURIComponent(sub.name)}`, {
+        gradeSchedules: remaining
+      });
+      await fetchSubjects();
+    } catch (err) {
+      console.error('Error removing subject from grade:', err);
+      alert(err.response?.data?.message || 'Failed to remove subject from grade.');
+    }
   };
 
   // ── Fetch students (same as original) ──
@@ -1267,6 +1323,7 @@ export default function ViewStudents() {
   useEffect(() => {
     fetchGrades();
     fetchSubjects();
+    fetchTeachers();
   }, []);
 
   useEffect(() => {
@@ -1274,9 +1331,9 @@ export default function ViewStudents() {
   }, [viewMode, fetchStudents]);
 
   // ── Handlers (same as original) ──
-  const handleGradeClick  = g => { setSelectedGrade(g); setViewMode('subjects'); };
+  const handleGradeClick = g => { setSelectedGrade(g); setViewMode('subjects'); };
   const handleSubjectClick = s => { setSelectedSubject(s); setViewMode('students'); setPage(1); };
-  const handleAllStudents  = () => { setSelectedGrade(null); setSelectedSubject(null); setViewMode('students'); setPage(1); };
+  const handleAllStudents = () => { setSelectedGrade(null); setSelectedSubject(null); setViewMode('students'); setPage(1); };
 
   const handleSearchChange = (val) => {
     setSearch(val);
@@ -1338,19 +1395,19 @@ export default function ViewStudents() {
                 type="button"
                 onClick={() => { setEditingGrade(null); setIsAddingGrade(true); }}
                 style={{
-                  background: 'linear-gradient(135deg, var(--accent, #d4af37), #aa820a)',
-                  color: '#fff',
-                  border: 'none',
+                  background: 'linear-gradient(135deg, #f5d77f 0%, #d4af37 50%, #aa820a 100%)',
+                  color: '#060a14',
+                  border: '1px solid rgba(255,255,255,0.3)',
                   padding: '9px 16px',
                   borderRadius: 'var(--r-lg)',
                   fontSize: '0.82rem',
-                  fontWeight: '700',
+                  fontWeight: '800',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '7px',
                   cursor: 'pointer',
-                  boxShadow: '0 4px 14px rgba(99,102,241,0.35)',
-                  transition: 'all 0.15s ease'
+                  boxShadow: '0 4px 16px rgba(212,175,55,0.35)',
+                  transition: 'transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.18s'
                 }}
               >
                 <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
@@ -1392,25 +1449,25 @@ export default function ViewStudents() {
                 type="button"
                 onClick={() => setIsAddingSubject(true)}
                 style={{
-                  background: 'linear-gradient(135deg, var(--accent, #d4af37), #aa820a)',
-                  color: '#fff',
-                  border: 'none',
+                  background: 'linear-gradient(135deg, #f5d77f 0%, #d4af37 50%, #aa820a 100%)',
+                  color: '#060a14',
+                  border: '1px solid rgba(255,255,255,0.3)',
                   padding: '9px 16px',
                   borderRadius: 'var(--r-lg)',
                   fontSize: '0.82rem',
-                  fontWeight: '700',
+                  fontWeight: '800',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '7px',
                   cursor: 'pointer',
-                  boxShadow: '0 4px 14px rgba(99,102,241,0.35)',
-                  transition: 'all 0.15s ease'
+                  boxShadow: '0 4px 16px rgba(212,175,55,0.35)',
+                  transition: 'transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.18s'
                 }}
               >
                 <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                 </svg>
-                <span>Add Subject</span>
+                <span>Assign / Add Subject</span>
               </button>
             )}
           </div>
@@ -1437,20 +1494,22 @@ export default function ViewStudents() {
               return (
                 <div key={gName} className="sel-card" onClick={() => handleGradeClick(gName)}>
                   {/* Quick Edit Button */}
-                  <button
-                    type="button"
-                    className="card-edit-btn"
-                    title={`Edit ${gName}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setEditingGrade(typeof g === 'object' ? g : { name: gName, shortCode: gCode });
-                      setIsAddingGrade(false);
-                    }}
-                  >
-                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                  </button>
+                  <div className="card-actions-corner">
+                    <button
+                      type="button"
+                      className="card-edit-btn"
+                      title={`Edit ${gName}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingGrade(typeof g === 'object' ? g : { name: gName, shortCode: gCode });
+                        setIsAddingGrade(false);
+                      }}
+                    >
+                      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                  </div>
 
                   <div className="grade-circle">{gCode}</div>
                   <div>
@@ -1497,35 +1556,59 @@ export default function ViewStudents() {
               .filter(sub => shouldShowSubject(sub, selectedGrade))
               .map(sub => {
                 const sm = getSubjMeta(sub.name);
+                const linkedTeacher = teachers.find(t => t.assignedSubject === sub.name);
                 return (
                   <div
                     key={sub._id}
                     className="sel-card subj-card"
                     onClick={() => handleSubjectClick(sub.name)}
-                    onMouseEnter={e => { e.currentTarget.style.borderColor = sm.color + '55'; }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = sm.color + '66'; }}
                     onMouseLeave={e => { e.currentTarget.style.borderColor = ''; }}
                   >
-                    {/* Quick Edit Button */}
-                    <button
-                      type="button"
-                      className="card-edit-btn"
-                      title={`Edit ${sub.name}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setEditingSubject(sub);
-                      }}
-                    >
-                      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                      </svg>
-                    </button>
+                    {/* Corner Action Buttons: Edit & Remove from this grade only */}
+                    <div className="card-actions-corner">
+                      <button
+                        type="button"
+                        className="card-edit-btn"
+                        title={`Edit ${sub.name}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingSubject(sub);
+                        }}
+                      >
+                        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                      {selectedGrade && (
+                        <button
+                          type="button"
+                          className="card-edit-btn remove"
+                          title={`Remove ${sub.name} from ${selectedGrade} only`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveSubjectFromGrade(sub, selectedGrade);
+                          }}
+                        >
+                          <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
 
                     <div className="subj-circle" style={{ background: sm.bg, border: `1px solid ${sm.color}30` }}>
                       <span style={{ fontSize: '1.45rem' }}>{sm.icon}</span>
                     </div>
-                    <div>
+                    <div style={{ width: '100%' }}>
                       <div className="card-name">{sub.name}</div>
-                      <div className="card-hint" style={{ color: sm.color, opacity: 0.85 }}>View students →</div>
+                      {linkedTeacher && (
+                        <div className="teacher-pill" title={linkedTeacher.username}>
+                          <span>👤</span>
+                          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{linkedTeacher.username}</span>
+                        </div>
+                      )}
+                      <div className="card-hint" style={{ color: sm.color, opacity: 0.85, marginTop: 6 }}>View students →</div>
                     </div>
                   </div>
                 );
@@ -1536,21 +1619,21 @@ export default function ViewStudents() {
             <div
               className="sel-card add-subj-card"
               onClick={() => setIsAddingSubject(true)}
-              title="Add New Subject"
+              title="Assign or Add Subject"
             >
               <div
                 className="subj-circle"
                 style={{
                   background: 'var(--accent-dim)',
-                  border: '1px solid rgba(99,102,241,0.25)',
+                  border: '1.5px dashed var(--accent)',
                   color: 'var(--accent)'
                 }}
               >
                 <span style={{ fontSize: '1.6rem', fontWeight: 300, lineHeight: 1 }}>+</span>
               </div>
               <div>
-                <div className="card-name">Add Subject</div>
-                <div className="card-hint" style={{ color: 'var(--text3)' }}>Create for this grade</div>
+                <div className="card-name">Assign / Add Subject</div>
+                <div className="card-hint" style={{ color: 'var(--text3)' }}>Only for {selectedGrade}</div>
               </div>
             </div>
           </div>
@@ -1579,16 +1662,16 @@ export default function ViewStudents() {
                 )}
               </div>
               <div className="search-actions-wrapper">
-                <button 
-                  className="action-btn" 
+                <button
+                  className="action-btn"
                   onClick={() => setFeeRemindersOpen(true)}
-                  style={{ 
-                    background: 'linear-gradient(135deg, #f59e0b, #d97706)', 
-                    color: '#fff', 
-                    border: 'none', 
-                    padding: '12px 18px', 
-                    borderRadius: 'var(--r-lg)', 
-                    height: '44px', 
+                  style={{
+                    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                    color: '#fff',
+                    border: 'none',
+                    padding: '12px 18px',
+                    borderRadius: 'var(--r-lg)',
+                    height: '44px',
                     margin: 0,
                     fontWeight: '700',
                     boxShadow: '0 4px 15px rgba(245,158,11,0.3)',
@@ -1601,19 +1684,19 @@ export default function ViewStudents() {
                   <span>FEE REMINDERS</span>
                 </button>
                 {selectedGrade && (
-                  <button 
-                    className="action-btn" 
+                  <button
+                    className="action-btn"
                     onClick={() => generateAllClassCardsPDF(students, `${selectedGrade}${selectedSubject ? `_${selectedSubject}` : ''}`)}
-                    style={{ 
-                      background: 'linear-gradient(135deg, #d4af37, #aa820a)', 
-                      color: '#fff', 
-                      border: 'none', 
-                      padding: '12px 18px', 
-                      borderRadius: 'var(--r-lg)', 
-                      height: '44px', 
+                    style={{
+                      background: 'linear-gradient(135deg, #f5d77f 0%, #d4af37 50%, #aa820a 100%)',
+                      color: '#060a14',
+                      border: '1px solid rgba(255,255,255,0.3)',
+                      padding: '12px 18px',
+                      borderRadius: 'var(--r-lg)',
+                      height: '44px',
                       margin: 0,
                       fontWeight: '800',
-                      boxShadow: '0 4px 15px rgba(99,102,241,0.4)',
+                      boxShadow: '0 4px 16px rgba(212,175,55,0.38)',
                       display: 'flex',
                       alignItems: 'center',
                       gap: '8px'
@@ -1642,15 +1725,15 @@ export default function ViewStudents() {
                 {students.length === 0
                   ? <div className="empty">No students found</div>
                   : students.map(s => (
-                      <StudentRow 
-                        key={s._id} 
-                        student={s} 
-                        onUpdate={() => fetchStudents(true)} 
-                        onEdit={setEditingStudent} 
-                        onOpenFeeModal={handleOpenFeeModal}
-                        subjectColors={subjectColors} 
-                      />
-                    ))
+                    <StudentRow
+                      key={s._id}
+                      student={s}
+                      onUpdate={() => fetchStudents(true)}
+                      onEdit={setEditingStudent}
+                      onOpenFeeModal={handleOpenFeeModal}
+                      subjectColors={subjectColors}
+                    />
+                  ))
                 }
               </div>
             )}
@@ -1660,7 +1743,7 @@ export default function ViewStudents() {
         )}
 
       </div>
-      
+
       {editingStudent && (
         <EditStudentDialog
           open={!!editingStudent}
@@ -1694,18 +1777,21 @@ export default function ViewStudents() {
           open={Boolean(editingSubject || isAddingSubject)}
           subject={editingSubject}
           defaultGrade={selectedGrade}
+          allSubjects={subjects}
           onClose={() => {
             setEditingSubject(null);
             setIsAddingSubject(false);
           }}
           onSaved={() => {
             fetchSubjects();
+            fetchTeachers();
             if (selectedGrade && viewMode === 'students') {
               fetchStudents(true);
             }
           }}
           onDeleted={(deletedName) => {
             fetchSubjects();
+            fetchTeachers();
             if (selectedSubject === deletedName) {
               setSelectedSubject(null);
               setViewMode('subjects');

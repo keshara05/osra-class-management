@@ -420,7 +420,8 @@ export default function EditGradeDialog({
                 fontWeight: 700,
                 borderRadius: '12px',
                 bgcolor: 'var(--accent, #d4af37)',
-                boxShadow: '0 4px 14px rgba(99,102,241,0.35)',
+                color: '#060a14',
+                boxShadow: '0 4px 14px rgba(212,175,55,0.35)',
                 '&:hover': {
                   bgcolor: '#aa820a'
                 }

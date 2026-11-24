@@ -357,12 +357,12 @@ export default function TeacherDashboard() {
                             sx={{
                                 borderRadius: '12px',
                                 bgcolor: '#d4af37',
-                                color: '#fff',
-                                fontWeight: 700,
+                                color: '#060a14',
+                                fontWeight: 800,
                                 px: 2.2,
                                 py: 1,
                                 textTransform: 'none',
-                                boxShadow: '0 4px 14px rgba(99,102,241,0.35)',
+                                boxShadow: '0 4px 14px rgba(212,175,55,0.35)',
                                 '&:hover': { bgcolor: '#aa820a' }
                             }}
                         >

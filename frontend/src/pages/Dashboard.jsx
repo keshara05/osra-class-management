@@ -392,37 +392,21 @@ export default function Dashboard() {
         )
         : 0;
 
-    // ── Loading state ──
+    // ── Loading state: sleek Osra gold shimmer skeleton ──
     if (loading) {
         return (
-            <div style={{
-                minHeight: '60vh',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 18,
-            }}>
-                <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 0.9, repeat: Infinity, ease: 'linear' }}
-                    style={{
-                        width: 48,
-                        height: 48,
-                        borderRadius: '50%',
-                        border: `3px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
-                        borderTopColor: PALETTE.indigo,
-                    }}
-                />
-                <span style={{
-                    color: isDark ? '#94a3b8' : '#64748b',
-                    fontSize: 13,
-                    letterSpacing: '1.2px',
-                    textTransform: 'uppercase',
-                    fontWeight: 600,
+            <div style={{ maxWidth: 1280, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 24 }}>
+                <div className="skeleton" style={{ height: 185, borderRadius: 22 }} />
+                <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 210px), 1fr))',
+                    gap: 18,
                 }}>
-                    Loading Live Dashboard…
-                </span>
+                    {[0, 1, 2, 3].map(i => (
+                        <div key={i} className="skeleton" style={{ height: 145, borderRadius: 18 }} />
+                    ))}
+                </div>
+                <div className="skeleton" style={{ height: 260, borderRadius: 20 }} />
             </div>
         );
     }
@@ -480,12 +464,12 @@ export default function Dashboard() {
                     background: isDark
                         ? 'radial-gradient(120% 120% at 0% 0%, rgba(212, 175, 55, 0.18) 0%, rgba(200, 150, 12, 0.08) 50%, rgba(15, 23, 42, 0.7) 100%)'
                         : 'radial-gradient(120% 120% at 0% 0%, rgba(212, 175, 55, 0.12) 0%, rgba(200, 150, 12, 0.06) 50%, rgba(255, 255, 255, 0.9) 100%)',
-                    backdropFilter: 'blur(20px)',
-                    WebkitBackdropFilter: 'blur(20px)',
+                    backdropFilter: 'blur(16px)',
+                    WebkitBackdropFilter: 'blur(16px)',
                     border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(212, 175, 55, 0.15)',
                     borderRadius: 22,
-                    padding: '28px 28px 24px',
-                    marginBottom: 30,
+                    padding: 'clamp(18px, 3vw, 28px)',
+                    marginBottom: 26,
                     position: 'relative',
                     overflow: 'hidden',
                     boxShadow: isDark
@@ -630,13 +614,13 @@ export default function Dashboard() {
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setReportOpen(true)}
                         style={{
-                            border: 'none',
+                            border: '1px solid rgba(255,255,255,0.35)',
                             cursor: 'pointer',
                             padding: '9px 18px',
                             borderRadius: 12,
-                            background: `linear-gradient(135deg, ${PALETTE.indigo} 0%, ${PALETTE.violet} 100%)`,
-                            color: '#fff',
-                            fontWeight: 700,
+                            background: `linear-gradient(135deg, #f5d77f 0%, #d4af37 55%, #aa820a 100%)`,
+                            color: '#060a14',
+                            fontWeight: 800,
                             fontSize: 13,
                             display: 'flex',
                             alignItems: 'center',
@@ -727,9 +711,9 @@ export default function Dashboard() {
                 animate="visible"
                 style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-                    gap: 18,
-                    marginBottom: 30,
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 210px), 1fr))',
+                    gap: 16,
+                    marginBottom: 26,
                 }}
             >
                 <StatCard
@@ -863,7 +847,7 @@ export default function Dashboard() {
                     animate="visible"
                     style={{
                         display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 260px), 1fr))',
                         gap: 16,
                     }}
                 >

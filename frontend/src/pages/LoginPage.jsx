@@ -20,9 +20,10 @@ const ROLES = [
     title: 'Admin Portal',
     subtitle: 'Full institute control',
     icon: '🛡️',
-    gradient: 'linear-gradient(135deg, #1a56db 0%, #3b82f6 100%)',
-    glow: 'rgba(59,130,246,0.4)',
-    accent: '#3b82f6',
+    gradient: 'linear-gradient(135deg, #f5d77f 0%, #d4af37 55%, #aa820a 100%)',
+    glow: 'rgba(212,175,55,0.38)',
+    accent: '#d4af37',
+    btnText: '#060a14',
     perks: ['User Management', 'Fee Control', 'Reports & Analytics'],
   },
   {
@@ -31,9 +32,10 @@ const ROLES = [
     title: 'Teacher Portal',
     subtitle: 'Classroom & attendance',
     icon: '📚',
-    gradient: 'linear-gradient(135deg, #6d28d9 0%, #c8960c 100%)',
-    glow: 'rgba(200,150,12,0.4)',
-    accent: '#c8960c',
+    gradient: 'linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)',
+    glow: 'rgba(56,189,248,0.36)',
+    accent: '#38bdf8',
+    btnText: '#ffffff',
     perks: ['Student Count by Grade', 'Monthly Attendance', 'Class Overview'],
   },
 ];
@@ -103,9 +105,9 @@ function RoleCard({ config, selected, onClick, delay }) {
           borderRadius: 14,
           background: selected ? config.gradient : 'rgba(255,255,255,0.05)',
           textAlign: 'center',
-          color: '#fff',
+          color: selected ? (config.btnText || '#fff') : '#fff',
           fontFamily: "'Sora', sans-serif",
-          fontWeight: 600,
+          fontWeight: 700,
           fontSize: 14,
           letterSpacing: '0.03em',
           transition: 'all 0.3s ease',
@@ -324,7 +326,7 @@ export default function LoginPage() {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '40px 20px',
+          padding: 'clamp(20px, 4vw, 40px) clamp(14px, 4vw, 24px)',
         }}>
 
           {/* ── HEADER ── */}
@@ -381,7 +383,7 @@ export default function LoginPage() {
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: 20 }}>
                   {ROLES.map((role, i) => (
                     <RoleCard
                       key={role.id}
@@ -405,11 +407,13 @@ export default function LoginPage() {
                 style={{ width: '100%', maxWidth: 460 }}
               >
                 <div style={{
-                  background: '#0c1322',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: 'rgba(10, 18, 35, 0.9)',
+                  backdropFilter: 'blur(18px)',
+                  WebkitBackdropFilter: 'blur(18px)',
+                  border: '1px solid rgba(212,175,55,0.18)',
                   borderRadius: 24,
-                  padding: '36px 36px 32px',
-                  boxShadow: '0 25px 60px rgba(0,0,0,0.6)',
+                  padding: 'clamp(22px, 5vw, 36px)',
+                  boxShadow: '0 25px 60px rgba(0,0,0,0.65)',
                   position: 'relative',
                   overflow: 'hidden',
                 }}>
@@ -564,8 +568,8 @@ export default function LoginPage() {
                         width: '100%', height: 54, marginTop: 8,
                         borderRadius: 16, border: 'none', cursor: loading ? 'not-allowed' : 'pointer',
                         background: loading ? 'rgba(255,255,255,0.1)' : roleConfig.gradient,
-                        color: '#fff', fontSize: 16,
-                        fontFamily: "'Sora', sans-serif", fontWeight: 700,
+                        color: loading ? '#fff' : (roleConfig.btnText || '#fff'), fontSize: 16,
+                        fontFamily: "'Sora', sans-serif", fontWeight: 800,
                         letterSpacing: '0.02em',
                         boxShadow: loading ? 'none' : `0 8px 30px ${roleConfig.glow}`,
                         transition: 'all 0.3s ease',

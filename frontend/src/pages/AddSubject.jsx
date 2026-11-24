@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     TextField,
@@ -15,7 +15,8 @@ import {
     FormControl,
     InputLabel,
     Select,
-    MenuItem
+    MenuItem,
+    Chip
 } from '@mui/material';
 import { motion } from 'framer-motion';
 import { MenuBook, Description, AddCircleOutline, CheckCircle, AttachMoney, CloudUpload, Person } from '@mui/icons-material';
@@ -30,6 +31,12 @@ const MotionPaper = motion(Paper);
 const colors = [
     '#e3f2fd', '#e8f5e9', '#fff3e0', '#f3e5f5',
     '#ffebee', '#f1f8e9', '#e0f7fa', '#fff8e1'
+];
+
+const ALL_GRADES = [
+    'Grade 03', 'Grade 04', 'Grade 05', 'Grade 06',
+    'Grade 07', 'Grade 08', 'Grade 09', 'Grade 10',
+    'Grade 11', 'Rapid Revision'
 ];
 
 export default function AddSubject() {
@@ -47,6 +54,20 @@ export default function AddSubject() {
         teacherDescription: '',
         teacherImage: ''
     });
+
+    const [selectedGrades, setSelectedGrades] = useState([]);
+    const [gradesList, setGradesList] = useState(ALL_GRADES);
+
+    useEffect(() => {
+        axios.get(`${API_BASE_URL}/api/students/grades`)
+            .then(res => {
+                if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+                    const merged = Array.from(new Set([...ALL_GRADES, ...res.data]));
+                    setGradesList(merged);
+                }
+            })
+            .catch(() => {});
+    }, []);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -98,7 +119,11 @@ export default function AddSubject() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(`${API_BASE_URL}/api/subjects`, formData);
+            const payload = {
+                ...formData,
+                gradeSchedules: selectedGrades.map(g => ({ grade: g, day: 'Monday' }))
+            };
+            await axios.post(`${API_BASE_URL}/api/subjects`, payload);
             alert('Subject Added Successfully');
             navigate('/');
         } catch (error) {
@@ -158,7 +183,8 @@ export default function AddSubject() {
                         width: 300,
                         height: 300,
                         borderRadius: '50%',
-                        background: 'radial-gradient(circle, rgba(6,182,212,0.2) 0%, transparent 70%)',
+                        background: 'radial-gradient(circle, rgba(212,175,55,0.18) 0%, transparent 70%)',
+                        pointerEvents: 'none',
                         zIndex: 0,
                     }}
                 />
@@ -170,7 +196,8 @@ export default function AddSubject() {
                         width: 300,
                         height: 300,
                         borderRadius: '50%',
-                        background: 'radial-gradient(circle, rgba(217,70,239,0.2) 0%, transparent 70%)',
+                        background: 'radial-gradient(circle, rgba(56,189,248,0.14) 0%, transparent 70%)',
+                        pointerEvents: 'none',
                         zIndex: 0,
                     }}
                 />
@@ -182,11 +209,11 @@ export default function AddSubject() {
                         variants={itemVariants}
                         gutterBottom
                         sx={{
-                            fontWeight: 700,
+                            fontWeight: 800,
                             color: 'text.primary',
                             textAlign: 'center',
                             fontSize: { xs: '1.75rem', md: '2.5rem' },
-                            textShadow: '0 0 20px rgba(59, 130, 246, 0.5)'
+                            textShadow: '0 0 24px rgba(212, 175, 55, 0.35)'
                         }}
                     >
                         Create New Subject
@@ -340,10 +367,76 @@ export default function AddSubject() {
                                         />
                                     </motion.div>
 
+                                    {/* ── Applicable Grades Selection ── */}
+                                    <motion.div variants={itemVariants}>
+                                        <Box sx={{
+                                            p: 2.5, borderRadius: 3,
+                                            border: '1px solid rgba(212,175,55,0.22)',
+                                            bgcolor: 'rgba(212,175,55,0.03)',
+                                            display: 'flex', flexDirection: 'column', gap: 1.5
+                                        }}>
+                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
+                                                <Typography variant="subtitle2" fontWeight={700} sx={{ color: 'primary.main' }}>
+                                                    Applicable Grades ({selectedGrades.length} selected)
+                                                </Typography>
+                                                <Box sx={{ display: 'flex', gap: 1 }}>
+                                                    <Button
+                                                        type="button"
+                                                        size="small"
+                                                        onClick={() => setSelectedGrades(gradesList)}
+                                                        sx={{ fontSize: '0.75rem', textTransform: 'none', fontWeight: 700, color: 'primary.main' }}
+                                                    >
+                                                        Select All
+                                                    </Button>
+                                                    <Button
+                                                        type="button"
+                                                        size="small"
+                                                        onClick={() => setSelectedGrades([])}
+                                                        sx={{ fontSize: '0.75rem', textTransform: 'none', color: 'text.secondary' }}
+                                                    >
+                                                        Clear
+                                                    </Button>
+                                                </Box>
+                                            </Box>
+                                            <Typography variant="caption" color="text.secondary" sx={{ mt: -0.5 }}>
+                                                Only selected grade cards will show this subject and teacher. You can also assign grades later inside each grade card.
+                                            </Typography>
+                                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                                                {gradesList.map(grade => {
+                                                    const isSelected = selectedGrades.includes(grade);
+                                                    return (
+                                                        <Chip
+                                                            key={grade}
+                                                            label={grade}
+                                                            clickable
+                                                            onClick={() => {
+                                                                setSelectedGrades(prev =>
+                                                                    prev.includes(grade) ? prev.filter(g => g !== grade) : [...prev, grade]
+                                                                );
+                                                            }}
+                                                            sx={{
+                                                                fontWeight: isSelected ? 800 : 600,
+                                                                fontSize: '0.8rem',
+                                                                bgcolor: isSelected ? 'primary.main' : alpha(theme.palette.text.primary, 0.06),
+                                                                color: isSelected ? '#060a14' : 'text.secondary',
+                                                                border: isSelected ? '1px solid #d4af37' : '1px solid rgba(255,255,255,0.1)',
+                                                                transition: 'all 0.16s cubic-bezier(0.22, 1, 0.36, 1)',
+                                                                '&:hover': {
+                                                                    bgcolor: isSelected ? 'primary.light' : alpha(theme.palette.primary.main, 0.14),
+                                                                    transform: 'translateY(-1px)'
+                                                                }
+                                                            }}
+                                                        />
+                                                    );
+                                                })}
+                                            </Box>
+                                        </Box>
+                                    </motion.div>
+
                                     <motion.div variants={itemVariants}>
                                         <Box sx={{
                                             mt: 1, p: 3, borderRadius: 3,
-                                            border: '1px dashed rgba(255,255,255,0.15)',
+                                            border: '1px dashed rgba(212,175,55,0.28)',
                                             bgcolor: 'rgba(255,255,255,0.02)',
                                             display: 'flex', flexDirection: 'column', gap: 2.5
                                         }}>
@@ -486,7 +579,7 @@ export default function AddSubject() {
                                 <motion.div variants={itemVariants}>
                                     <Button
                                         component={motion.button}
-                                        whileHover={{ scale: 1.02, boxShadow: '0 0 20px rgba(59, 130, 246, 0.6)' }}
+                                        whileHover={{ scale: 1.02, boxShadow: '0 8px 28px rgba(212, 175, 55, 0.5)' }}
                                         whileTap={{ scale: 0.98 }}
                                         type="submit"
                                         variant="contained"
@@ -498,13 +591,14 @@ export default function AddSubject() {
                                             px: 6,
                                             borderRadius: 3,
                                             textTransform: 'none',
-                                            fontSize: '1.1rem',
-                                            fontWeight: 600,
+                                            fontSize: '1.05rem',
+                                            fontWeight: 800,
+                                            color: '#060a14',
                                             background: 'linear-gradient(135deg, #f5d77f 0%, #d4af37 50%, #aa820a 100%)',
-                                            boxShadow: '0 4px 14px 0 rgba(37, 99, 235, 0.39)',
-                                            display: 'block',
+                                            boxShadow: '0 6px 20px 0 rgba(212, 175, 55, 0.38)',
+                                            display: 'flex',
                                             mx: 'auto',
-                                            border: '1px solid rgba(255,255,255,0.2)'
+                                            border: '1px solid rgba(255,255,255,0.35)'
                                         }}
                                     >
                                         Add Subject

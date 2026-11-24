@@ -235,9 +235,9 @@ function SideNavItem({ item, active, onClick, theme, collapsed }) {
             position: 'absolute',
             inset: 0,
             borderRadius: 14,
-            background: 'linear-gradient(135deg, #d4af37 0%, #aa820a 55%, #c8960c 100%)',
-            boxShadow: '0 6px 20px -2px rgba(212, 175, 55, 0.45), inset 0 1px 0 0 rgba(255, 255, 255, 0.3)',
-            border: '1px solid rgba(255, 255, 255, 0.15)',
+            background: 'linear-gradient(135deg, #f5d77f 0%, #d4af37 55%, #aa820a 100%)',
+            boxShadow: '0 6px 20px -2px rgba(212, 175, 55, 0.45), inset 0 1px 0 0 rgba(255, 255, 255, 0.45)',
+            border: '1px solid rgba(255, 255, 255, 0.25)',
             zIndex: 0,
           }}
         />
@@ -255,22 +255,22 @@ function SideNavItem({ item, active, onClick, theme, collapsed }) {
 
       {/* Icon */}
       <span style={{
-        color: active ? '#fff' : colors.sub,
+        color: active ? '#060a14' : colors.sub,
         flexShrink: 0,
         display: 'flex',
         alignItems: 'center',
         zIndex: 1,
         transition: 'color 0.2s',
       }}>
-        <IconComp size={18} color={active ? '#fff' : colors.sub} />
+        <IconComp size={18} color={active ? '#060a14' : colors.sub} />
       </span>
 
       {/* Label */}
       {!collapsed && (
         <span style={{
-          fontWeight: active ? 700 : 600,
+          fontWeight: active ? 800 : 600,
           fontSize: 13.5,
-          color: active ? '#fff' : colors.sub,
+          color: active ? '#060a14' : colors.sub,
           letterSpacing: '-0.2px',
           zIndex: 1,
           transition: 'color 0.2s',
@@ -289,8 +289,8 @@ function SideNavItem({ item, active, onClick, theme, collapsed }) {
             marginLeft: 'auto',
             width: 6, height: 6,
             borderRadius: '50%',
-            background: '#fff',
-            boxShadow: '0 0 8px #fff',
+            background: '#060a14',
+            boxShadow: '0 0 6px rgba(6,10,20,0.45)',
             flexShrink: 0,
             zIndex: 1,
           }}
@@ -329,14 +329,14 @@ function BottomNavItem({ item, active, onClick, theme }) {
           layoutId="activeTabBg"
           style={{
             position: 'absolute',
-            top: 5,
-            width: 44,
-            height: 40,
-            borderRadius: 14,
-            background: 'linear-gradient(135deg, #d4af37 0%, #aa820a 50%, #c8960c 100%)',
-            boxShadow: '0 6px 20px rgba(212, 175, 55, 0.45), inset 0 1px 0 0 rgba(255, 255, 255, 0.25)',
+            top: 4,
+            width: 46,
+            height: 36,
+            borderRadius: 12,
+            background: 'linear-gradient(135deg, #f5d77f 0%, #d4af37 55%, #aa820a 100%)',
+            boxShadow: '0 4px 16px rgba(212, 175, 55, 0.45), inset 0 1px 0 0 rgba(255, 255, 255, 0.4)',
           }}
-          transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+          transition={{ type: 'spring', stiffness: 420, damping: 30 }}
         />
       )}
 
@@ -347,20 +347,20 @@ function BottomNavItem({ item, active, onClick, theme }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        width: 40, height: 38,
+        width: 40, height: 34,
       }}>
         <IconComp
           size={19}
-          color={active ? '#fff' : colors.muted}
+          color={active ? '#060a14' : colors.muted}
         />
       </span>
 
       {/* Label */}
       <span style={{
         fontSize: 9.5,
-        fontWeight: 700,
-        letterSpacing: '0.4px',
-        color: active ? '#fff' : colors.muted,
+        fontWeight: active ? 800 : 700,
+        letterSpacing: '0.35px',
+        color: active ? A.gold : colors.muted,
         textTransform: 'uppercase',
         lineHeight: 1,
         transition: 'color 0.2s',
@@ -785,7 +785,9 @@ export default function Layout() {
                 position: 'fixed',
                 inset: 0,
                 zIndex: 200,
-                background: 'rgba(0,0,0,0.7)',
+                background: 'rgba(3,7,18,0.65)',
+                backdropFilter: 'blur(6px)',
+                WebkitBackdropFilter: 'blur(6px)',
               }}
             />
             <motion.div
@@ -823,30 +825,31 @@ export default function Layout() {
           top: 0,
           zIndex: 100,
           background: colors.glass,
-          backdropFilter: 'blur(24px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+          backdropFilter: 'blur(20px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
           borderBottom: `1px solid ${scrolled ? colors.border : 'rgba(255,255,255,0.04)'}`,
-          padding: '0 24px',
-          height: 66,
+          padding: '0 clamp(12px, 3vw, 24px)',
+          height: 64,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          transition: 'border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+          gap: 10,
+          transition: 'border-color 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1)',
           boxShadow: scrolled
             ? (theme === 'dark' ? '0 10px 30px -10px rgba(0,0,0,0.6)' : '0 10px 25px -10px rgba(0,0,0,0.08)')
             : 'none',
         }}>
 
           {/* Left Actions & Breadcrumb */}
-          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center', minWidth: 0, flex: 1 }}>
             {/* Back Button */}
             <motion.button
               whileHover={{ scale: 1.05, y: -1 }}
               whileTap={{ scale: 0.92 }}
               onClick={() => navigate(-1)}
               style={{
-                width: 40, height: 40,
-                borderRadius: 12,
+                width: 38, height: 38,
+                borderRadius: 11,
                 border: `1px solid ${colors.border}`,
                 background: colors.surface,
                 display: 'flex',
@@ -856,11 +859,11 @@ export default function Layout() {
                 outline: 'none',
                 flexShrink: 0,
                 color: colors.text,
-                transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                transition: 'all 0.2s cubic-bezier(0.22, 1, 0.36, 1)',
               }}
               title="Go Back"
             >
-              <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width={17} height={17} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="19" y1="12" x2="5" y2="12"/>
                 <polyline points="12 19 5 12 12 5"/>
               </svg>
@@ -873,8 +876,8 @@ export default function Layout() {
               whileTap={{ scale: 0.92 }}
               onClick={() => setSidebarOpen(true)}
               style={{
-                width: 40, height: 40,
-                borderRadius: 12,
+                width: 38, height: 38,
+                borderRadius: 11,
                 border: `1px solid ${colors.border}`,
                 background: colors.surface,
                 display: 'flex',
@@ -890,31 +893,35 @@ export default function Layout() {
             </motion.button>
 
             {/* Title / Breadcrumb Pill */}
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{
+            <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 7, minWidth: 0 }}>
+                <span className="hide-mobile" style={{
                   fontSize: 11,
                   fontWeight: 700,
                   letterSpacing: '1px',
                   textTransform: 'uppercase',
                   color: A.gold,
+                  flexShrink: 0,
                 }}>
                   Osra Institute
                 </span>
-                <span style={{ fontSize: 10, color: colors.muted }}>/</span>
+                <span className="hide-mobile" style={{ fontSize: 10, color: colors.muted, flexShrink: 0 }}>/</span>
                 <AnimatePresence mode="wait">
                   <motion.span
                     key={pageTitle}
                     initial={{ opacity: 0, y: -4 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 4 }}
-                    transition={{ duration: 0.2 }}
+                    transition={{ duration: 0.16, ease: [0.22, 1, 0.36, 1] }}
                     style={{
                       fontWeight: 800,
-                      fontSize: 16,
+                      fontSize: 'clamp(14px, 2.2vw, 16px)',
                       color: colors.text,
                       letterSpacing: '-0.3px',
                       lineHeight: 1.2,
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
                     }}
                   >
                     {pageTitle}
@@ -925,7 +932,7 @@ export default function Layout() {
           </div>
 
           {/* Right Controls */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(6px, 1.5vw, 12px)', flexShrink: 0 }}>
             {/* Live System Online Pill (Desktop) */}
             <div
               style={{
@@ -1042,21 +1049,22 @@ export default function Layout() {
 
         {/* ── PAGE CONTENT ── */}
         <div
-          className="main-scroll-area"
+          className="main-scroll-area main-content-pad"
           style={{
             flex: 1,
             overflowY: 'auto',
             overflowX: 'hidden',
-            padding: '22px 18px 100px',
+            WebkitOverflowScrolling: 'touch',
+            overscrollBehaviorY: 'contain',
           }}
         >
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={location.pathname}
-              initial={{ opacity: 0, y: 14 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.22, ease: 'easeOut' }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
             >
               <Outlet />
             </motion.div>
@@ -1074,11 +1082,13 @@ export default function Layout() {
           right: 0,
           zIndex: 150,
           background: colors.glass,
+          backdropFilter: 'blur(20px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
           borderTop: `1px solid ${colors.border}`,
           display: 'flex',
           alignItems: 'stretch',
-          padding: '4px 6px 8px',
-          boxShadow: `0 -2px 24px rgba(0,0,0,0.1)`,
+          padding: '4px 6px calc(env(safe-area-inset-bottom, 0px) + 8px)',
+          boxShadow: theme === 'dark' ? '0 -8px 32px rgba(0,0,0,0.5)' : '0 -4px 24px rgba(15,23,42,0.08)',
         }}
       >
         {NAV_ITEMS.map(item => (
@@ -1094,7 +1104,11 @@ export default function Layout() {
 
       {/* ── Global CSS ── */}
       <style>{`
+        .main-content-pad {
+          padding: 16px 12px calc(env(safe-area-inset-bottom, 0px) + 92px);
+        }
         @media (min-width: 900px) {
+          .main-content-pad { padding: 24px 28px 40px; }
           .desktop-sidebar { display: block !important; position: sticky !important; }
           .mobile-menu-btn { display: none !important; }
           .bottom-nav { display: none !important; }

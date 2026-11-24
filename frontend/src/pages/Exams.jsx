@@ -483,11 +483,11 @@ export default function Exams({ isTeacherView = false }) {
               borderRadius: 12,
               border: 'none',
               background: '#d4af37',
-              color: '#fff',
-              fontWeight: 700,
+              color: '#060a14',
+              fontWeight: 800,
               fontSize: 13,
               cursor: 'pointer',
-              boxShadow: '0 4px 14px rgba(99,102,241,0.3)'
+              boxShadow: '0 4px 14px rgba(212,175,55,0.35)'
             }}
           >
             <span>←</span>
