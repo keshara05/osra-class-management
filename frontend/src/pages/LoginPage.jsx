@@ -303,9 +303,9 @@ export default function LoginPage() {
       `}</style>
 
       <div style={{
-        minHeight: '100vh',
+        minHeight: '100dvh',
         position: 'relative',
-        overflow: 'hidden',
+        overflowX: 'clip',
         background: 'radial-gradient(ellipse at 50% 15%, #0f172a 0%, #030712 100%)',
         color: '#fff'
       }}>
@@ -321,7 +321,7 @@ export default function LoginPage() {
         {/* Main content */}
         <div style={{
           position: 'relative', zIndex: 10,
-          minHeight: '100vh',
+          minHeight: '100dvh',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',

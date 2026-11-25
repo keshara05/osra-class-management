@@ -9,7 +9,7 @@ const PageTransition = ({ children }) => {
             initial="initial"
             animate="animate"
             exit="exit"
-            style={{ width: '100%', height: '100%' }}
+            style={{ width: '100%' }}
         >
             {children}
         </motion.div>

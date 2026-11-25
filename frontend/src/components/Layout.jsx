@@ -385,12 +385,15 @@ export default function Layout() {
   const colors = T[theme];
 
   useEffect(() => {
-    const el = document.querySelector('.main-scroll-area');
-    if (!el) return;
-    const onScroll = () => setScrolled(el.scrollTop > 10);
-    el.addEventListener('scroll', onScroll);
-    return () => el.removeEventListener('scroll', onScroll);
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   const userInfo = (() => {
     try {
@@ -713,7 +716,7 @@ export default function Layout() {
   return (
     <div style={{
       display: 'flex',
-      minHeight: '100vh',
+      minHeight: '100dvh',
       background: 'transparent',
       fontFamily: "'Outfit', 'Inter', sans-serif",
       color: colors.text,
@@ -726,7 +729,7 @@ export default function Layout() {
       <div className="desktop-sidebar" style={{
         position: 'sticky',
         top: 0,
-        height: '100vh',
+        height: '100dvh',
         flexShrink: 0,
         display: 'none',
       }}>
@@ -815,7 +818,7 @@ export default function Layout() {
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
-        minHeight: '100vh',
+        minHeight: '100dvh',
         minWidth: 0,
       }}>
 
@@ -1052,10 +1055,7 @@ export default function Layout() {
           className="main-scroll-area main-content-pad"
           style={{
             flex: 1,
-            overflowY: 'auto',
-            overflowX: 'hidden',
-            WebkitOverflowScrolling: 'touch',
-            overscrollBehaviorY: 'contain',
+            minWidth: 0,
           }}
         >
           <AnimatePresence mode="wait" initial={false}>
